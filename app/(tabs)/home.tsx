@@ -1,8 +1,10 @@
 import { PageContainer, Subtitle, Title } from "@/components/shared";
 import { useLoginState } from "@/hooks";
+import { router, useRouter } from "expo-router";
 import { Button, StyleSheet, View } from "react-native";
 
 export default function HomeScreen() {
+  const router = useRouter();
   const { setUsername, setName, setEmail, setPassword, setAccessToken } =
     useLoginState();
 
@@ -12,6 +14,8 @@ export default function HomeScreen() {
     setEmail("");
     setPassword("");
     setAccessToken("");
+
+    router.replace("/signIn");
   };
   return (
     <PageContainer>

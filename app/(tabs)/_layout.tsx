@@ -1,5 +1,5 @@
 import { Tabs, useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
@@ -11,8 +11,14 @@ export default function TabLayout() {
   const { accessToken } = useLoginState();
   const router = useRouter();
 
+  useEffect(() => {
+    if (!accessToken) {
+      router.replace("/signIn");
+    }
+  }, [accessToken]);
+
   if (!accessToken) {
-    router.push("/signIn");
+    return null;
   }
 
   const colorScheme = useColorScheme();
