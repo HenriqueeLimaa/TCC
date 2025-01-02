@@ -1,8 +1,12 @@
 export type UserInfoState = {
-  name?: string;
-  email?: string;
-  password?: string;
-  isLoggedIn?: boolean;
-  setIsLoggedIn?: (value: boolean) => void;
-  accessToken?: string;
+  username: string;
+  setUsername: (value: string) => void;
+  name: string;
+  setName: (value: string) => void;
+  email: string;
+  setEmail: (value: string) => void;
+  password: string;
+  setPassword: (value: string) => void;
+  accessToken: string;
+  setAccessToken: (value: string) => void;
 };
