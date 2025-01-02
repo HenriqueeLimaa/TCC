@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
+import { PageContainer, Title } from "@/components/shared";
 
 export default function TabTwoScreen() {
   return (
-    <View>
-      <Text>Explore</Text>
-    </View>
+    <PageContainer>
+      {/* Not sure of the name for this session yet, for now i will call it "Your pet" */}
+      <Title>Your Pet</Title>
+    </PageContainer>
   );
 }
 
