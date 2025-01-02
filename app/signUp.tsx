@@ -6,12 +6,13 @@ import {
   FormContainer,
   InputField,
 } from "@/components/signInAndSignUp";
+import { useLoginState } from "@/hooks";
 
 export default function SignUpPage() {
-  const [userName, setUserName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
+
+  const { username, setUsername, email, setEmail, password, setPassword } =
+    useLoginState();
 
   // Here we also need to check if the Username is valid
   const disableSignUpButton =
@@ -19,8 +20,8 @@ export default function SignUpPage() {
     password.length < 8 ||
     password !== passwordConfirmation;
 
-  // Here we'll implement a logic to show a message to confirm if everything goes
-  // well and then redirect to the sign in page
+  // Here we'll implement a logic to call the signUp api and show a message
+  // to confirm if everything went well and then redirect to the sign in page
   const handleSignUpButton = () => {};
   return (
     <PageContainer>
@@ -28,8 +29,8 @@ export default function SignUpPage() {
       <FormContainer>
         <InputField
           placeholder="Username"
-          value={userName}
-          onChangeText={(e) => setUserName(e)}
+          value={username}
+          onChangeText={(e) => setUsername(e)}
         />
         <InputField
           placeholder="E-mail"

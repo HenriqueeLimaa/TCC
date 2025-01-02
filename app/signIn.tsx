@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { PageContainer, Title } from "@/components/shared";
 import {
@@ -6,10 +5,10 @@ import {
   FormContainer,
   InputField,
 } from "@/components/signInAndSignUp";
+import { useLoginState } from "@/hooks";
 
 export default function SignInPage() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const { email, setEmail, password, setPassword, setAccessToken} = useLoginState();
 
   const disableSignInButton = !email.includes("@") || +password.length < 8;
 
