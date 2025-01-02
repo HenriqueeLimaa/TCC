@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PageContainer, Title } from "@/components/shared";
 import {
   AuthPageButton,
@@ -6,17 +7,30 @@ import {
   InputField,
 } from "@/components/signInAndSignUp";
 import { useLoginState } from "@/hooks";
+import { useRouter } from "expo-router";
 
 export default function SignInPage() {
-  const { email, setEmail, password, setPassword, setAccessToken} = useLoginState();
+  const { email, setEmail, password, setPassword, setAccessToken } =
+    useLoginState();
+  const router = useRouter();
 
   const disableSignInButton = !email.includes("@") || +password.length < 8;
 
-  const handleSignInButton = () => {
-    // Here we have to change the state of the isLoggedIn variable on the loginState context
-    // and then navigate to the home page. Maybe we can store the access token on the device storage
+  const handleSignInButton = async () => {
+    // Here we have the accessToken field on the loginState context
+    // and then navigate to the home page. While we arent really calling
+    // the API, we can just set a random token here and use this
+    // @react-native-async-storage/async-storage lib
+    try {
+      const accessTokenMock = "4815162342";
+      setAccessToken(accessTokenMock);
 
-  }
+      await AsyncStorage.setItem("accessToken", accessTokenMock);
+      router.push("/home");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <PageContainer>
       <Title>Sign In</Title>
