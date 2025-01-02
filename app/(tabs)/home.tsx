@@ -1,6 +1,6 @@
-import { PageContainer, Title } from "@/components/shared";
+import { PageContainer, Subtitle, Title } from "@/components/shared";
 import { useLoginState } from "@/hooks";
-import { Button, StyleSheet } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 
 export default function HomeScreen() {
   const { setUsername, setName, setEmail, setPassword, setAccessToken } =
@@ -17,8 +17,15 @@ export default function HomeScreen() {
     <PageContainer>
       <Title>Home</Title>
       <Button title="Logout" onPress={handleLogout} />
+      <View style={styles.contentContainer}>
+        <Subtitle>Add your goals</Subtitle>
+      </View>
     </PageContainer>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  contentContainer: {
+    marginTop: 20,
+  },
+});

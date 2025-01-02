@@ -14,7 +14,7 @@ export default function TabLayout() {
   if (!accessToken) {
     router.push("/signIn");
   }
-  
+
   const colorScheme = useColorScheme();
   return (
     <Tabs
@@ -42,9 +42,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="Explore"
+        name="explore"
         options={{
-          title: "Explore",
+          title: "Your pet",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
