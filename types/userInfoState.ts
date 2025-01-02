@@ -4,4 +4,5 @@ export type UserInfoState = {
   password?: string;
   isLoggedIn?: boolean;
   setIsLoggedIn?: (value: boolean) => void;
+  accessToken?: string;
 };
