@@ -3,9 +3,14 @@ import { useLoginState } from "@/hooks";
 import { Button, StyleSheet } from "react-native";
 
 export default function HomeScreen() {
-  const { setAccessToken } = useLoginState();
+  const { setUsername, setName, setEmail, setPassword, setAccessToken } =
+    useLoginState();
 
   const handleLogout = () => {
+    setUsername("");
+    setName("");
+    setEmail("");
+    setPassword("");
     setAccessToken("");
   };
   return (

@@ -22,7 +22,12 @@ export default function SignUpPage() {
 
   // Here we'll implement a logic to call the signUp api and show a message
   // to confirm if everything went well and then redirect to the sign in page
-  const handleSignUpButton = () => {};
+  const handleSignUpButton = () => {
+    // Here we'll call the signUp api, clean the password fields and then
+    // redirect to the sign in page
+    setPassword("");
+    setPasswordConfirmation("");
+  };
   return (
     <PageContainer>
       <Title>Sign Up</Title>

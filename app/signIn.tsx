@@ -26,6 +26,7 @@ export default function SignInPage() {
       setAccessToken(accessTokenMock);
 
       await AsyncStorage.setItem("accessToken", accessTokenMock);
+      setPassword("");
       router.push("/home");
     } catch (error) {
       console.log(error);
