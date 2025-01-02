@@ -13,12 +13,15 @@ export default function AuthPage() {
       <BodyText style={styles.instructionsText}>
         Sign in or sign up to start to improve your productivity
       </BodyText>
-      <View style={styles.imagePlaceholder} />
+      {/* Only a placeholder, must delete this later */}
+      <View style={styles.imagePlaceholder}>
+        <BodyText>Image placeholder</BodyText>
+      </View>
       <View style={styles.buttonsContainer}>
-        <AuthPageButton onPress={() => router.push('/signIn')}>
+        <AuthPageButton onPress={() => router.push("/signIn")}>
           Sign In
         </AuthPageButton>
-        <AuthPageButton onPress={() => console.log("Sign Up Clicked!")}>
+        <AuthPageButton onPress={() => router.push("/signUp")}>
           Sign Up
         </AuthPageButton>
       </View>
@@ -28,7 +31,7 @@ export default function AuthPage() {
 
 const styles = StyleSheet.create({
   instructionsText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     textAlign: "center",
     maxWidth: "80%",
   },
@@ -37,7 +40,10 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   imagePlaceholder: {
-    backgroundColor: 'gray',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "gray",
     height: 300,
     width: 300,
     borderRadius: 10,

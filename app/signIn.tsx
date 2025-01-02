@@ -8,14 +8,15 @@ import {
 } from "@/components/signInAndSignUp";
 
 export default function SignInPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  const disableSignInButton = !email.includes("@") ||  password.length < 8;
+  const disableSignInButton = !email.includes("@") || +password.length < 8;
 
   const handleSignInButton = () => {
     // Here we have to change the state of the isLoggedIn variable on the loginState context
-    // and then navigate to the home page
+    // and then navigate to the home page. Maybe we can store the access token on the device storage
+
   }
   return (
     <PageContainer>
@@ -36,7 +37,7 @@ export default function SignInPage() {
       </FormContainer>
       <AuthPageButton
         style={styles.signInButton}
-        onPress={() => console.log("Sign In Clicked!")}
+        onPress={handleSignInButton}
         disabled={disableSignInButton}
       >
         Sign In
