@@ -33,7 +33,6 @@ const styles = StyleSheet.create({
   instructionsText: {
     fontWeight: "bold",
     textAlign: "center",
-    maxWidth: "80%",
   },
   buttonsContainer: {
     marginTop: 20,
@@ -47,6 +46,6 @@ const styles = StyleSheet.create({
     height: 300,
     width: '100%',
     borderRadius: 10,
-    marginTop: 20,
+    marginTop: 40,
   },
 });

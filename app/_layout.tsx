@@ -57,6 +57,7 @@ export default function RootLayout() {
   return (
     <LoginStateProvider initialAccessToken={initialAccessToken}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <StatusBar style="auto" />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="signIn" />
@@ -64,7 +65,6 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="pageNotFound" />
         </Stack>
-        <StatusBar style="auto" />
       </ThemeProvider>
     </LoginStateProvider>
   );
