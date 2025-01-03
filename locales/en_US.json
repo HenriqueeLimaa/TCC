@@ -1,0 +1,7 @@
+{
+  "tabBar": {
+    "home": "Home",
+    "pet": "Your pet",
+    "profile": "Profile"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Pet App BR",
+  "tabBar": {
+    "home": "Início",
+    "pet": "Seu pet",
+    "profile": "Perfil"
+  }
+}
