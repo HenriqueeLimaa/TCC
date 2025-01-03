@@ -2,7 +2,7 @@ import { Tabs, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
+import { IconSymbol, IconSymbolName } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme, useLoginState } from "@/hooks";
@@ -10,6 +10,7 @@ import { useColorScheme, useLoginState } from "@/hooks";
 export default function TabLayout() {
   const { accessToken } = useLoginState();
   const router = useRouter();
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     if (!accessToken) {
@@ -21,7 +22,6 @@ export default function TabLayout() {
     return null;
   }
 
-  const colorScheme = useColorScheme();
   return (
     <Tabs
       screenOptions={{
@@ -53,6 +53,15 @@ export default function TabLayout() {
           title: "Your pet",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name={"accountCircle.fill" as IconSymbolName} color={color} />
           ),
         }}
       />
