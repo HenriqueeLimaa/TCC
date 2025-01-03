@@ -17,6 +17,8 @@ const languageDetector = {
     const locales = Localization.getLocales();
     const languageTag = locales && locales[0] ? locales[0].languageTag : 'en';
     callback(languageTag);
+    // if you want to force other language to appear, use this:
+    // callback('pt');
   },
   init: () => {},
   cacheUserLanguage: () => {},
