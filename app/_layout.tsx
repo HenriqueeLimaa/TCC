@@ -18,9 +18,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   // just to make sure the token is loaded before the app tries to use it
-  const [isTokenLoaded, setIsTokenLoaded] = useState(false);
   const [initialAccessToken, setInitialAccessToken] = useState<string | null>(
-    null
+    ""
   );
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -34,17 +33,16 @@ export default function RootLayout() {
     const loadAccessToken = async () => {
       const token = await AsyncStorage.getItem("accessToken");
       setInitialAccessToken(token);
-      setIsTokenLoaded(true);
-    }
+    };
 
     loadAccessToken();
   }, []);
 
   useEffect(() => {
-    if (isTokenLoaded && initialAccessToken) {
+    if (initialAccessToken !== null) {
       router.replace("/(tabs)/home");
     }
-  }, []);
+  }, [initialAccessToken]);
 
   useEffect(() => {
     if (loaded) {
