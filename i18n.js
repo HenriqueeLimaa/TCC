@@ -4,7 +4,6 @@ import * as Localization from 'expo-localization';
 import enUS from './locales/en_US.json';
 import ptBR from './locales/pt_BR.json';
 
-
 const resources = {
   en: { translation: enUS },
   pt: { translation: ptBR },
