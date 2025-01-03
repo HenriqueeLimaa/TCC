@@ -1,17 +1,19 @@
 import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import { BodyText, PageContainer, Title } from "@/components/shared";
 import { AuthPageButton } from "@/components/signInAndSignUp";
 
 export default function AuthPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   // idea: use some symbols of neurodivergencies, such as sunflower for autism or infinity for
   // general neurodivergencies
   return (
     <PageContainer>
-      <Title>Welcome</Title>
+      <Title>{t("welcomePage.title")}</Title>
       <BodyText style={styles.instructionsText}>
-        Sign in or sign up to start to improve your productivity
+        {t("welcomePage.subtitle")}
       </BodyText>
       {/* Only a placeholder, must delete this later */}
       <View style={styles.imagePlaceholder}>
@@ -19,10 +21,10 @@ export default function AuthPage() {
       </View>
       <View style={styles.buttonsContainer}>
         <AuthPageButton onPress={() => router.push("/signIn")}>
-          Sign In
+          {t("welcomePage.signIn")}
         </AuthPageButton>
         <AuthPageButton onPress={() => router.push("/signUp")}>
-          Sign Up
+          {t("welcomePage.signUp")}
         </AuthPageButton>
       </View>
     </PageContainer>
@@ -39,12 +41,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   imagePlaceholder: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "gray",
     height: 300,
-    width: '100%',
+    width: "100%",
     borderRadius: 10,
     marginTop: 40,
   },

@@ -1,4 +1,25 @@
 {
+  "welcomePage": {
+    "title": "Welcome!",
+    "subtitle": "Sign in or sign up to start to improve your productivity",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "signInPage": {
+    "title": "Sign In",
+    "email": "E-mail",
+    "password": "Password",
+    "signIn": "Sign In",
+    "forgotPassword": "Forgot password?"
+  },
+  "signUpPage": {
+    "title": "Sign Up",
+    "username": "Username",
+    "email": "E-mail",
+    "password": "Password",
+    "passwordConfirmation": "Confirm your password",
+    "confirmButton": "Sign up"
+  },
   "tabBar": {
     "home": "Home",
     "pet": "Your pet",

@@ -52,7 +52,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: "Your pet",
+          title: t('tabBar.pet'),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -61,7 +61,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: t('tabBar.profile'),
           tabBarIcon: ({ color }) => (
             // need to fix this later to show the correct icon, which could be the commented one
             // <IconSymbol size={28} name={"accountCircle.fill" as IconSymbolName} color={color} />

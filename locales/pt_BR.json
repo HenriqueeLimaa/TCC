@@ -1,5 +1,25 @@
 {
-  "title": "Pet App BR",
+  "welcomePage": {
+    "title": "Bem vindo!",
+    "subtitle": "Entre ou se inscreva para começar a aumentar sua produtividade",
+    "signIn": "Entrar",
+    "signUp": "Registrar"
+  },
+  "signInPage": {
+    "title": "Entrar",
+    "email": "E-mail",
+    "password": "Senha",
+    "signIn": "Entrar",
+    "forgotPassword": "Esqueceu sua senha?"
+  },
+  "signUpPage": {
+    "title": "Inscreva-se",
+    "username": "Nome de usuário",
+    "email": "E-mail",
+    "password": "Senha",
+    "passwordConfirmation": "Confirme sua senha",
+    "confirmButton": "Inscrever-se"
+  },
   "tabBar": {
     "home": "Início",
     "pet": "Seu pet",

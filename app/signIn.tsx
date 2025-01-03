@@ -8,11 +8,13 @@ import {
 } from "@/components/signInAndSignUp";
 import { useLoginState } from "@/hooks";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 export default function SignInPage() {
+  const router = useRouter();
+  const { t } = useTranslation();
   const { email, setEmail, password, setPassword, setAccessToken } =
     useLoginState();
-  const router = useRouter();
 
   const disableSignInButton = !email.includes("@") || +password.length < 8;
 
@@ -34,16 +36,16 @@ export default function SignInPage() {
   };
   return (
     <PageContainer>
-      <Title>Sign In</Title>
+      <Title>{t("signInPage.title")}</Title>
       <FormContainer>
         <InputField
-          placeholder="E-mail"
+          placeholder={t("signInPage.email")}
           keyboardType="email-address"
           value={email}
           onChangeText={(e) => setEmail(e)}
         />
         <InputField
-          placeholder="Password"
+          placeholder={t("signInPage.password")}
           value={password}
           onChangeText={(p) => setPassword(p)}
           isPasswordField
@@ -54,7 +56,7 @@ export default function SignInPage() {
         onPress={handleSignInButton}
         disabled={disableSignInButton}
       >
-        Sign In
+        {t("signInPage.signIn")}
       </AuthPageButton>
     </PageContainer>
   );

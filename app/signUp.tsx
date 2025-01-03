@@ -7,10 +7,11 @@ import {
   InputField,
 } from "@/components/signInAndSignUp";
 import { useLoginState } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 export default function SignUpPage() {
+  const { t } = useTranslation();
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
-
   const { username, setUsername, email, setEmail, password, setPassword } =
     useLoginState();
 
@@ -30,27 +31,27 @@ export default function SignUpPage() {
   };
   return (
     <PageContainer>
-      <Title>Sign Up</Title>
+      <Title>{t('signUpPage.title')}</Title>
       <FormContainer>
         <InputField
-          placeholder="Username"
+          placeholder={t('signUpPage.username')}
           value={username}
           onChangeText={(e) => setUsername(e)}
         />
         <InputField
-          placeholder="E-mail"
+          placeholder={t('signUpPage.email')}
           keyboardType="email-address"
           value={email}
           onChangeText={(e) => setEmail(e)}
         />
         <InputField
-          placeholder="Password"
+          placeholder={t('signUpPage.password')}
           value={password}
           onChangeText={(p) => setPassword(p)}
           isPasswordField
         />
         <InputField
-          placeholder="Confirm your password"
+          placeholder={t('signUpPage.passwordConfirmation')}
           value={passwordConfirmation}
           onChangeText={(p) => setPasswordConfirmation(p)}
           isPasswordField
@@ -61,7 +62,7 @@ export default function SignUpPage() {
         onPress={handleSignUpButton}
         disabled={disableSignUpButton}
       >
-        Sign In
+        {t('signUpPage.confirmButton')}
       </AuthPageButton>
     </PageContainer>
   );
