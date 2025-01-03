@@ -1,6 +1,7 @@
 import { PageContainer, Subtitle, Title } from "@/components/shared";
 import { useLoginState } from "@/hooks";
-import { router, useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import { Button, StyleSheet, View } from "react-native";
 
 export default function HomeScreen() {
@@ -14,6 +15,7 @@ export default function HomeScreen() {
     setEmail("");
     setPassword("");
     setAccessToken("");
+    AsyncStorage.removeItem("accessToken");
 
     router.replace("/signIn");
   };

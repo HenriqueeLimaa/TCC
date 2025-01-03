@@ -1,6 +1,8 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useState, useEffect } from "react";
 import { UserInfoState } from "../types/userInfoState";
 
+// Later we will divide this state into other contexts. Probably one only for login,
+// other for user info and maybe other for the token.
 const defaultValues: UserInfoState = {
   username: "",
   setUsername: () => {},
@@ -16,12 +18,24 @@ const defaultValues: UserInfoState = {
 
 export const LoginStateContext = createContext<UserInfoState>(defaultValues);
 
-export const LoginStateProvider = ({ children }: { children: ReactNode }) => {
+export const LoginStateProvider = ({
+  children,
+  initialAccessToken = "",
+}: {
+  children: ReactNode;
+  initialAccessToken?: string | null;
+}) => {
   const [username, setUsername] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [accessToken, setAccessToken] = useState<string>("");
+  const [accessToken, setAccessToken] = useState<string>(initialAccessToken || "");
+
+  useEffect(() => {
+    if (initialAccessToken) {
+      setAccessToken(initialAccessToken);
+    }
+  }, [initialAccessToken]);
 
   const context = {
     username,
@@ -35,7 +49,6 @@ export const LoginStateProvider = ({ children }: { children: ReactNode }) => {
     accessToken,
     setAccessToken,
   };
-
   return (
     <LoginStateContext.Provider value={context}>
       {children}

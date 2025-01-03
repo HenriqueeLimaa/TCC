@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import {
   DarkTheme,
   DefaultTheme,
@@ -11,30 +11,39 @@ import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { LoginStateProvider } from "@/store";
-import { useLoginState } from "@/hooks";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { setAccessToken } = useLoginState();
+  // just to make sure the token is loaded before the app tries to use it
+  const [isTokenLoaded, setIsTokenLoaded] = useState(false);
+  const [initialAccessToken, setInitialAccessToken] = useState<string | null>(
+    null
+  );
+  const router = useRouter();
   const colorScheme = useColorScheme();
+  const [loaded] = useFonts({});
   // place the path of the font
   // eg: useFonts({
   // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   // });
-  const [loaded] = useFonts({});
 
   useEffect(() => {
-    const loadTokenOpeningApp = async () => {
+    const loadAccessToken = async () => {
       const token = await AsyncStorage.getItem("accessToken");
-      if (token) {
-        setAccessToken(token);
-      }
-    };
+      setInitialAccessToken(token);
+      setIsTokenLoaded(true);
+    }
 
-    loadTokenOpeningApp();
+    loadAccessToken();
+  }, []);
+
+  useEffect(() => {
+    if (isTokenLoaded && initialAccessToken) {
+      router.replace("/(tabs)/home");
+    }
   }, []);
 
   useEffect(() => {
@@ -48,7 +57,7 @@ export default function RootLayout() {
   }
 
   return (
-    <LoginStateProvider>
+    <LoginStateProvider initialAccessToken={initialAccessToken}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
