@@ -22,7 +22,7 @@
   },
   "tabBar": {
     "home": "Home",
-    "pet": "Your pet",
+    "partner": "Your partner",
     "profile": "Profile"
   }
 }
