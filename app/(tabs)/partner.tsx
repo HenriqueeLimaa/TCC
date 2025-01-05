@@ -5,7 +5,7 @@ export default function TabTwoScreen() {
   return (
     <PageContainer>
       {/* Not sure of the name for this session yet, for now i will call it "Your pet" */}
-      <Title>Your Pet</Title>
+      <Title>Your Partner</Title>
     </PageContainer>
   );
 }
