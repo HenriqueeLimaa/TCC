@@ -7,6 +7,6 @@ export const useLoginState = () => {
   if (!context) {
     throw new Error("useLoginState must be used inside of a LoginProvider");
   }
-  
+
   return context;
 };

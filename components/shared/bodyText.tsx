@@ -1,12 +1,11 @@
 import { Text, StyleSheet, TextStyle } from "react-native";
 
-export const BodyText = ({
-  children,
-  style,
-}: {
+type BodyTextProps = {
   children: string;
   style?: TextStyle | TextStyle[];
-}) => {
+};
+
+export const BodyText = ({ children, style }: BodyTextProps) => {
   const defaultAndOptionalStyles = [stylesSheet.bodyText, style];
   return <Text style={defaultAndOptionalStyles}>{children}</Text>;
 };

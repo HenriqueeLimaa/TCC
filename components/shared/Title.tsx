@@ -1,12 +1,8 @@
 import { StyleSheet, Text, TextStyle } from "react-native";
 
-export const Title = ({
-  children,
-  style,
-}: {
-  children: string;
-  style?: TextStyle | TextStyle[];
-}) => {
+type TitleProps = { children: string; style?: TextStyle | TextStyle[] };
+
+export const Title = ({ children, style }: TitleProps) => {
   const defaultAndOptionalStyles = [styles.title, style];
   return <Text style={defaultAndOptionalStyles}>{children}</Text>;
 };

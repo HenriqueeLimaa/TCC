@@ -1,16 +1,18 @@
 import { TouchableOpacity, Text, StyleSheet, ViewStyle } from "react-native";
 
+type AuthPageButtonProps = {
+  children: string;
+  onPress: () => void;
+  style?: ViewStyle | ViewStyle[];
+  disabled?: boolean;
+};
+
 export const AuthPageButton = ({
   children,
   onPress,
   style,
   disabled,
-}: {
-  children: string;
-  onPress: () => void;
-  style?: ViewStyle | ViewStyle[];
-  disabled?: boolean;
-}) => {
+}: AuthPageButtonProps) => {
   const disabledStyle = disabled ? styles.disabledButton : {};
   const defaultAndCustomStyles = [styles.button, disabledStyle, style];
   return (

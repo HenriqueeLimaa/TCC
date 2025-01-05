@@ -1,18 +1,20 @@
 import { KeyboardTypeOptions, TextInput, StyleSheet } from "react-native";
 
+type InputFieldProps = {
+  placeholder: string;
+  keyboardType?: KeyboardTypeOptions;
+  value: string;
+  onChangeText: (text: string) => void;
+  isPasswordField?: boolean;
+};
+
 export const InputField = ({
   placeholder,
   keyboardType,
   value,
   onChangeText,
   isPasswordField,
-}: {
-  placeholder: string;
-  keyboardType?: KeyboardTypeOptions;
-  value: string;
-  onChangeText: (text: string) => void;
-  isPasswordField?: boolean;
-}) => {
+}: InputFieldProps) => {
   return (
     <TextInput
       style={styles.inputField}

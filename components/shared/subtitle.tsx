@@ -1,12 +1,11 @@
 import { StyleSheet, TextStyle, Text } from "react-native";
 
-export const Subtitle = ({
-  children,
-  style,
-}: {
+type SubtitleProps = {
   children: string;
   style?: TextStyle | TextStyle[];
-}) => {
+};
+
+export const Subtitle = ({ children, style }: SubtitleProps) => {
   const defaultAndOptionalStyles = [styles.subtitle, style];
   return <Text style={defaultAndOptionalStyles}>{children}</Text>;
 };

@@ -7,10 +7,10 @@ export const FormContainer = ({ children }: { children: ReactNode }) => {
 
 const styles = StyleSheet.create({
   formContainer: {
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     borderRadius: 10,
     paddingVertical: 40,
     paddingHorizontal: 20,
-    width: '100%',
+    width: "100%",
   },
 });
