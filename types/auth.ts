@@ -1,4 +1,4 @@
-export type UserInfoState = {
+export type AuthState = {
   username: string;
   setUsername: (value: string) => void;
   name: string;
