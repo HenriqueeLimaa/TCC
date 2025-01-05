@@ -22,7 +22,7 @@
   },
   "tabBar": {
     "home": "Início",
-    "pet": "Seu pet",
+    "partner": "Parceiro",
     "profile": "Perfil"
   }
 }
