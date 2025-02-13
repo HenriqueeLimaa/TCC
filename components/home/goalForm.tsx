@@ -9,13 +9,13 @@ export const GoalForm = () => {
     <View>
       <TextInput placeholder="Title" />
       <TextInput placeholder="Description" />
-      <DateTimePicker
+      {/* <DateTimePicker
         
         value={new Date()}
         mode="datetime" // Use "time" for time selection or "datetime" for both
         // display={Platform.OS === "ios" ? "inline" : "default"}
         // onChange={onChange}
-      />
+      /> */}
     </View>
   );
 };
