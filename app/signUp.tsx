@@ -8,6 +8,7 @@ import {
 } from "@/components/signInAndSignUp";
 import { useLoginState } from "@/hooks";
 import { useTranslation } from "react-i18next";
+import { registerUser } from "@/api/userService";
 
 export default function SignUpPage() {
   const { t } = useTranslation();
@@ -26,6 +27,16 @@ export default function SignUpPage() {
   const handleSignUpButton = () => {
     // Here we'll call the signUp api, clean the password fields and then
     // redirect to the sign in page
+    // example:
+    // registerUser(name, username, email, password, birthDate);
+    const userInfo = {
+      name: 'joaozinho da silva',
+      nickname: username,
+      email: email,
+      password: password,
+      birthDate: '10/08/1995',
+    }
+    registerUser(userInfo);
     setPassword("");
     setPasswordConfirmation("");
   };
