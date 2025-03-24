@@ -20,6 +20,7 @@ apiClient.interceptors.request.use(async (config) => {
 
 export default apiClient;
 
+// I might have to fix this function to make it work with all http methods
 export const baseRequest = async (url: string, method: string, data?: any) => {
   try {
     const response = await apiClient({
