@@ -19,3 +19,21 @@ apiClient.interceptors.request.use(async (config) => {
 })
 
 export default apiClient;
+
+export const baseRequest = async (url: string, method: string, data?: any) => {
+  try {
+    const response = await apiClient({
+      method,
+      url,
+      data,
+    });
+    // logging the response just for now
+    if (response.status === 200) {
+      console.log('==> RESPONSE: ', response.data);
+    }
+
+    return response.data;
+  } catch (error) {
+    console.log('==> ERROR: ', error);
+  }
+};
