@@ -1,6 +1,7 @@
 import { TextInput, View } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
+import React from "react";
 
 export const GoalForm = () => {
   const [date, setDate] = useState(new Date());

@@ -1,3 +1,4 @@
+import React from "react";
 import { StyleSheet, TextStyle, Text } from "react-native";
 
 type SubtitleProps = {

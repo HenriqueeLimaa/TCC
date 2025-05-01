@@ -1,3 +1,4 @@
+import React from "react";
 import { KeyboardTypeOptions, TextInput, StyleSheet } from "react-native";
 
 type InputFieldProps = {

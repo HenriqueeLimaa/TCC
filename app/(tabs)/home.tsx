@@ -1,5 +1,6 @@
 import { AddGoalButton, GoalForm } from "@/components/home";
 import { PageContainer, Subtitle, Title } from "@/components/shared";
+import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 export default function HomeScreen() {

@@ -9,6 +9,7 @@ import {
 import { useLoginState } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { registerUser } from "@/api/userService";
+import React from "react";
 
 export default function SignUpPage() {
   const { t } = useTranslation();

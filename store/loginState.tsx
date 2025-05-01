@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState, useEffect } from "react";
+import React, { createContext, ReactNode, useState, useEffect } from "react";
 import { AuthState } from "../types/auth";
 
 // Later we will divide this state into other contexts. Probably one only for login,

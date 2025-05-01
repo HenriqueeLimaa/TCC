@@ -13,6 +13,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { LoginStateProvider } from "@/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import '../i18n';
+import React from "react";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -40,7 +41,8 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (initialAccessToken !== null) {
+    // if (initialAccessToken !== null) {
+    if (true) {
       router.replace("/(tabs)/home");
     }
   }, [initialAccessToken]);

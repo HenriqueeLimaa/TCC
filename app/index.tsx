@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { BodyText, PageContainer, Title } from "@/components/shared";
 import { AuthPageButton } from "@/components/signInAndSignUp";
+import React from "react";
 
 export default function AuthPage() {
   const router = useRouter();

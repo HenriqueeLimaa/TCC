@@ -3,6 +3,7 @@ import { PageContainer, Title } from "@/components/shared";
 import { useRouter } from "expo-router";
 import { useLoginState } from "@/hooks";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
 
 export default function Profile() {
   const router = useRouter();

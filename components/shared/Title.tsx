@@ -1,3 +1,4 @@
+import React from "react";
 import { StyleSheet, Text, TextStyle } from "react-native";
 
 type TitleProps = { children: string; style?: TextStyle | TextStyle[] };
