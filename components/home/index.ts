@@ -1,2 +1,1 @@
-export { AddGoalButton } from "./addGoalButton";
-export { GoalForm } from "./goalForm";
+export { Header } from "./header";
