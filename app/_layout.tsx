@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
+import { Platform } from "react-native";
 import { useFonts } from "expo-font";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useRouter, useSegments, SplashScreen as RouterSplashScreen } from "expo-router";
 import {
   DarkTheme,
   DefaultTheme,
@@ -23,7 +24,9 @@ export default function RootLayout() {
   const [initialAccessToken, setInitialAccessToken] = useState<string | null>(
     ""
   );
+  const [isNavigationReady, setIsNavigationReady] = useState(false);
   const router = useRouter();
+  const segments = useSegments();
   const colorScheme = useColorScheme();
   
   // Carregando as fontes Roboto com a estrutura correta
@@ -38,17 +41,26 @@ export default function RootLayout() {
     const loadAccessToken = async () => {
       const token = await AsyncStorage.getItem("accessToken");
       setInitialAccessToken(token);
+      setIsNavigationReady(true);
     };
 
     loadAccessToken();
   }, []);
 
   useEffect(() => {
-    // if (initialAccessToken !== null) {
-    if (true) {
+    // Only execute navigation logic when the component is fully mounted and ready
+    if (isNavigationReady && fontsLoaded) {
+      // Uncomment this when you want to check for token
+      // if (initialAccessToken !== null) {
+      //   router.replace("/(tabs)/home");
+      // } else {
+      //   router.replace("/signIn");
+      // }
+      
+      // For now, since you're forcing navigation regardless of token
       router.replace("/(tabs)/home");
     }
-  }, [initialAccessToken]);
+  }, [isNavigationReady, fontsLoaded, initialAccessToken, router]);
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -63,7 +75,7 @@ export default function RootLayout() {
   return (
     <LoginStateProvider initialAccessToken={initialAccessToken}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <StatusBar style="auto" />
+        <StatusBar style="dark" backgroundColor="#FFFFFF" />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="signIn" />

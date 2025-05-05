@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Text, ScrollView, Dimensions, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, Dimensions, TouchableOpacity } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { Text } from "../shared";
 
 const DAYS_OF_WEEK = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 const DAYS_OF_WEEK_FULL = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
@@ -116,16 +118,18 @@ const CalendarCarousel = React.forwardRef<
             key={index}
             style={[
               styles.dayItem,
-              selectedDayIndex === index && styles.selectedDayItem,
               !item.isCurrentMonth && styles.differentMonthDay
             ]}
             onPress={() => handleDayPress(index)}
           >
-            <Text style={[
-              styles.dayText
-            ]}>
+            <Text style={styles.dayText}>
               {item.weekDay}
             </Text>
+            {selectedDayIndex === index && (
+              <View style={styles.selectedCircleContainer}>
+                <View style={styles.selectedDayCircle} />
+              </View>
+            )}
             <Text style={[
               styles.dateText,
               selectedDayIndex === index && styles.selectedDayText
@@ -198,7 +202,7 @@ export const Header = () => {
           style={styles.arrowButton}
           onPress={() => handleNavigate('prev')}
         >
-          <Text style={styles.arrowText}>←</Text>
+          <Ionicons name="chevron-back" size={24} color="#CCCCCC" />
         </TouchableOpacity>
         
         <View style={styles.titleTextContainer}>
@@ -210,7 +214,7 @@ export const Header = () => {
           style={styles.arrowButton}
           onPress={() => handleNavigate('next')}
         >
-          <Text style={styles.arrowText}>→</Text>
+          <Ionicons name="chevron-forward" size={24} color="#CCCCCC" />
         </TouchableOpacity>
       </View>
       
@@ -226,15 +230,21 @@ const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#FFFFFF',
     alignItems: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    width: Dimensions.get('window').width,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    zIndex: 10,
+    alignSelf: 'center',
   },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '90%',
+    width: '100%',
     marginBottom: 10,
   },
   titleTextContainer: {
@@ -253,7 +263,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   arrowButton: {
-    padding: 10,
+    padding: 0,
     width: 44,
     height: 44,
     justifyContent: 'center',
@@ -268,13 +278,37 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   daysContainer: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 0,
   },
   dayItem: {
     width: DAY_ITEM_WIDTH - 4,
     height: 65,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  dayItemContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 65,
+  },
+  selectedCircleContainer: {
+    position: 'absolute',
+    top: 28,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  selectedDayCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#00CC66',
+  },
+  selectedDayText: {
+    color: '#FFFFFF',
+    zIndex: 2,
   },
   selectedDayItem: {
     backgroundColor: '#FFFFFF',
@@ -284,23 +318,15 @@ const styles = StyleSheet.create({
   },
   dayText: {
     fontSize: 14,
-    color: '#333333',
+    lineHeight: 20,
+    color: '#999999',
     textTransform: 'uppercase',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   dateText: {
-    fontSize: 18,
+    fontSize: 22,
+    lineHeight: 28,
     fontWeight: '600',
     color: '#333333',
-  },
-  selectedDayText: {
-    color: '#FFFFFF',
-    backgroundColor: '#00CC66',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    overflow: 'hidden',
   },
 });

@@ -7,7 +7,7 @@ export const PageContainer = ({ children }: { children: ReactNode }) => {
 
 const styles = StyleSheet.create({
   pageContainer: {
-    backgroundColor: "#f5f5f7",
+    backgroundColor: "#F4F4F5",
     width: "100%",
     height: "100%",
     paddingHorizontal: 20,

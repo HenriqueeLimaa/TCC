@@ -1,7 +1,7 @@
-import { Header, Tasks } from "@/components/home";
-import { PageContainer, Subtitle, Title } from "@/components/shared";
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Header, Tasks } from "@/components/home";
+import { PageContainer } from "@/components/shared";
+import { StyleSheet, View } from "react-native";
 
 export default function HomeScreen() {
   // Maybe we could first ask for the user goals, that are the things that they
@@ -17,14 +17,17 @@ export default function HomeScreen() {
   return (
     <PageContainer>
       <Header />
-      <Tasks title="Com horário" tasks={tasks1Mock} />
-      <Tasks title="Em algum momento do dia" tasks={[]} />
+      <View style={styles.contentContainer}>
+        <Tasks title="Com horário" tasks={tasks1Mock} />
+        <Tasks title="Em algum momento do dia" tasks={[]} />
+      </View>
     </PageContainer>
   );
 }
 
 const styles = StyleSheet.create({
   contentContainer: {
-    marginTop: 20,
+    marginTop: 170, // Espaço para o Header
+    width: '100%',
   },
 });

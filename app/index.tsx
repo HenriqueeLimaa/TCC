@@ -1,15 +1,21 @@
-import { useRouter } from "expo-router";
+import { useRouter, Redirect } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { BodyText, PageContainer, Title } from "@/components/shared";
 import { AuthPageButton } from "@/components/signInAndSignUp";
 import React from "react";
+import { useLoginState } from "@/hooks";
 
 export default function AuthPage() {
   const router = useRouter();
+  const { accessToken } = useLoginState();
   const { t } = useTranslation();
-  // idea: use some symbols of neurodivergencies, such as sunflower for autism or infinity for
-  // general neurodivergencies
+
+  // If user is already logged in, redirect to home
+  if (accessToken) {
+    return <Redirect href="/(tabs)/home" />;
+  }
+
   return (
     <PageContainer>
       <Title>{t("welcomePage.title")}</Title>

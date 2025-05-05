@@ -14,16 +14,16 @@ export default function TabLayout() {
   const { accessToken } = useLoginState();
   const { t } = useTranslation();
 
+  // Only try to navigate when the component is mounted and accessToken is actually checked
   useEffect(() => {
-    if (!accessToken) {
+    // Only navigate if we're certain the token is missing (not just loading)
+    if (accessToken === null) {
       router.replace("/signIn");
     }
-  }, [accessToken]);
+  }, [accessToken, router]);
 
-  if (!accessToken) {
-    return null;
-  }
-
+  // Instead of returning null which can cause navigation issues,
+  // render the Tabs component even when not authenticated
   return (
     <Tabs
       screenOptions={{
