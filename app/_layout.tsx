@@ -25,11 +25,14 @@ export default function RootLayout() {
   );
   const router = useRouter();
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({});
-  // place the path of the font
-  // eg: useFonts({
-  // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  // });
+  
+  // Carregando as fontes Roboto com a estrutura correta
+  const [fontsLoaded] = useFonts({
+    'Roboto-Regular': require('../assets/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf'),
+    'Roboto-Italic': require('../assets/fonts/Roboto/Roboto-Italic-VariableFont_wdth,wght.ttf'),
+    'Roboto-Medium': require('../assets/fonts/Roboto/static/Roboto_SemiCondensed-Medium.ttf'),
+    'Roboto-Bold': require('../assets/fonts/Roboto/static/Roboto_SemiCondensed-Bold.ttf'),
+  });
 
   useEffect(() => {
     const loadAccessToken = async () => {
@@ -48,12 +51,12 @@ export default function RootLayout() {
   }, [initialAccessToken]);
 
   useEffect(() => {
-    if (loaded) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded]);
 
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
 

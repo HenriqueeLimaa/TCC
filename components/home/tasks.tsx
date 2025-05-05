@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, ScrollView, Button } from "react-native";
+import { View, StyleSheet, ScrollView, Button } from "react-native";
 import { TaskItem } from "./taskItem";
+import { Text } from "../shared";
 
 interface TasksProps {
   title: string;

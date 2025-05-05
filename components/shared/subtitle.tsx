@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, TextStyle, Text } from "react-native";
+import { StyleSheet, TextStyle } from "react-native";
+import { Text } from "./Text";
 
 type SubtitleProps = {
   children: string;
@@ -7,14 +8,15 @@ type SubtitleProps = {
 };
 
 export const Subtitle = ({ children, style }: SubtitleProps) => {
-  const defaultAndOptionalStyles = [styles.subtitle, style];
-  return <Text style={defaultAndOptionalStyles}>{children}</Text>;
+  const defaultAndOptionalStyles = [styles.subtitle, ...(Array.isArray(style) ? style : [style])].filter(
+    (s): s is TextStyle => s !== undefined
+  );
+  return <Text style={defaultAndOptionalStyles} fontFamily="medium">{children}</Text>;
 };
 
 const styles = StyleSheet.create({
   subtitle: {
     fontSize: 20,
-    fontWeight: "bold",
     marginBottom: 10,
   },
 });

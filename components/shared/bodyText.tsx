@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, StyleSheet, TextStyle } from "react-native";
+import { StyleSheet, TextStyle } from "react-native";
+import { Text } from "./Text";
 
 type BodyTextProps = {
   children: string;
@@ -7,13 +8,11 @@ type BodyTextProps = {
 };
 
 export const BodyText = ({ children, style }: BodyTextProps) => {
-  const defaultAndOptionalStyles = [stylesSheet.bodyText, style];
-  return <Text style={defaultAndOptionalStyles}>{children}</Text>;
+  const defaultAndOptionalStyles: TextStyle[] = [styles.bodyText, ...(Array.isArray(style) ? style : [style])].filter(Boolean) as TextStyle[];
+  return <Text style={defaultAndOptionalStyles} fontFamily="regular">{children}</Text>;
 };
 
-// the name of this variable should be stylesSheet because of our optional prop
-// called styles to apply more specific styles to each instance of the component
-const stylesSheet = StyleSheet.create({
+const styles = StyleSheet.create({
   bodyText: {
     fontSize: 16,
     lineHeight: 24,
