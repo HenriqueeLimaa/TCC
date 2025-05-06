@@ -4,10 +4,8 @@ import { Tabs, useRouter } from "expo-router";
 import { useTranslation } from 'react-i18next';
 import { useColorScheme, useLoginState } from "@/hooks";
 import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
 import { TabBarIcon } from "@/components/shared";
 
 export default function TabLayout() {
@@ -33,12 +31,19 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          lineHeight: 16,
+        },
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
             position: "absolute",
           },
-          default: {},
+          default: {
+            paddingTop: 12,
+            height: 80
+          },
         }),
       }}
     >

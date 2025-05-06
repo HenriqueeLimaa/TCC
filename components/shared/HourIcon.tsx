@@ -31,7 +31,7 @@ export const HourIcon: React.FC<HourIconProps> = ({ taskHour, hourType, size = 2
       case "morning":
         return "rgba(255, 195, 0, 0.25)"; // Amarelo claro para manhã
       case "afternoon":
-        return "rgba(255, 150, 50, 0.25)"; // Laranja claro para tarde
+        return "rgba(25, 157, 227, 0.20)"; // Laranja claro para tarde
       case "night":
         return "rgba(100, 100, 255, 0.25)"; // Azul claro para noite
       default:
