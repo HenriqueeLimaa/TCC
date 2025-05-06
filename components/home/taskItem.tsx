@@ -29,7 +29,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     } else if (hour >= 12 && hour < 18) {
       return "afternoon";
     } else {
-      return null;
+      return 'night';
     }
   };
 

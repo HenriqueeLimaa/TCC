@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     height: 32,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 12,
   },
   activeContainer: {
     backgroundColor: 'rgba(99, 222, 161, 0.24)', // 24% opacity
