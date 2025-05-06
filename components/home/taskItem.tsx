@@ -12,7 +12,7 @@ interface TaskItemProps {
 export const TaskItem: React.FC<TaskItemProps> = ({ 
   isFirst = false, 
   isLast = false,
-  taskTime = "09:00" 
+  taskTime = ''
 }) => {
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -29,7 +29,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     } else if (hour >= 12 && hour < 18) {
       return "afternoon";
     } else {
-      return "night";
+      return null;
     }
   };
 
@@ -50,7 +50,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       </View>
       <View style={styles.taskItemRight}>
         <View style={styles.rightControls}>
-          <HourIcon taskHour={taskTime} hourType={getHourType()} size={24} />
+          {taskTime && <HourIcon taskHour={taskTime} hourType={getHourType()} size={24} />}
           <TouchableOpacity 
             style={[
               styles.radioButton, 

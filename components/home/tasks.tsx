@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 interface TasksProps {
   title: string;
-  tasks: { id: number; title: string; time: string }[]; // list of tasks
+  tasks: { id: number; title: string; time?: string }[]; // list of tasks
 }
 
 export const Tasks: React.FC<TasksProps> = ({ title, tasks }) => {

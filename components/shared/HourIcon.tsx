@@ -2,7 +2,7 @@ import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { Text } from "./Text";
 
-type HourType = "morning" | "afternoon" | "night";
+type HourType = "morning" | "afternoon" | "night" | null;
 
 interface HourIconProps {
   taskHour: string;
