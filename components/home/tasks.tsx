@@ -28,9 +28,10 @@ export const Tasks: React.FC<TasksProps> = ({ title, tasks }) => {
         <ScrollView>
           {tasks.map((task, index) => (
             <TaskItem 
-              key={index} 
+              key={task.id} 
               isFirst={index === 0}
               isLast={index === tasks.length - 1}
+              taskTime={task.time}
             />
           ))}
         </ScrollView>

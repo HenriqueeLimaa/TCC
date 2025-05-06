@@ -1,47 +1,68 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { Text } from "../shared";
+import { Text, HourIcon } from "../shared";
 import { Ionicons } from "@expo/vector-icons";
 
 interface TaskItemProps {
   isFirst?: boolean;
   isLast?: boolean;
+  taskTime?: string;
 }
 
-export const TaskItem: React.FC<TaskItemProps> = ({ isFirst = false, isLast = false }) => {
+export const TaskItem: React.FC<TaskItemProps> = ({ 
+  isFirst = false, 
+  isLast = false,
+  taskTime = "09:00" 
+}) => {
   const [isCompleted, setIsCompleted] = useState(false);
 
   const toggleTaskCompletion = () => {
     setIsCompleted(!isCompleted);
   };
 
+  // Determinar o período do dia com base no horário da tarefa
+  const getHourType = () => {
+    const hour = parseInt(taskTime.split(":")[0], 10);
+    
+    if (hour >= 5 && hour < 12) {
+      return "morning";
+    } else if (hour >= 12 && hour < 18) {
+      return "afternoon";
+    } else {
+      return "night";
+    }
+  };
+
   return (
     <View style={[
       styles.taskItem,
-      !isFirst && { marginTop: 8 },
-      !isLast && { marginBottom: 8 }
+      !isFirst && { marginTop: 4 },
+      !isLast && { marginBottom: 4 }
     ]}>
       <View style={styles.taskItemLeft}>
         <View style={styles.iconBackground}>
-         <Image 
-          source={require('../../assets/images/taskIconMock.png')} 
-          style={styles.icon} 
-        />
+          <Image 
+            source={require('../../assets/images/taskIconMock.png')} 
+            style={styles.icon} 
+          />
         </View>
         <Text style={styles.taskTitle}>Task Title</Text>
       </View>
-      <View>
-        <TouchableOpacity 
-          style={[
-            styles.radioButton, 
-            isCompleted && styles.radioButtonCompleted
-          ]} 
-          onPress={toggleTaskCompletion}
-        >
-          {isCompleted ? (
-            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-          ) : null}
-        </TouchableOpacity>
+      <View style={styles.taskItemRight}>
+        <View style={styles.rightControls}>
+          <HourIcon taskHour={taskTime} hourType={getHourType()} size={24} />
+          <TouchableOpacity 
+            style={[
+              styles.radioButton, 
+              isCompleted && styles.radioButtonCompleted
+            ]} 
+            onPress={toggleTaskCompletion}
+          >
+            {isCompleted ? (
+              <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+            ) : null}
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -61,15 +82,26 @@ const styles = StyleSheet.create({
    alignItems: "center",
    justifyContent: 'center',
   },
+  taskItemRight: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  rightControls: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
   radioButton: {
     width: 24,
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#000",
+    borderColor: "#999999",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "transparent",
+    marginLeft: 16,
   },
   radioButtonCompleted: {
     backgroundColor: "#00CC66", // Verde
@@ -88,9 +120,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   taskTitle: {
-    fontSize: 20,
+    fontSize: 16,
     lineHeight: 20,
     color: "#333333",
     marginLeft: 16,
+  },
+  taskTime: {
+    fontSize: 14,
+    color: "#666666",
   }
 });
