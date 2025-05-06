@@ -4,3 +4,4 @@ export { Subtitle } from "./subtitle";
 export { BodyText } from "./bodyText";
 export { Text } from "./Text";
 export { HourIcon } from "./HourIcon";
+export { TabBarIcon } from "./tabBarIcon";

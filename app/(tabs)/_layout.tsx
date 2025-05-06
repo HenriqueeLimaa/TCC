@@ -4,9 +4,11 @@ import { Tabs, useRouter } from "expo-router";
 import { useTranslation } from 'react-i18next';
 import { useColorScheme, useLoginState } from "@/hooks";
 import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol, IconSymbolName } from "@/components/ui/IconSymbol";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
+import { TabBarIcon } from "@/components/shared";
 
 export default function TabLayout() {
   const router = useRouter();
@@ -43,29 +45,27 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: t('tabBar.home'),
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+          title: 'Tarefas',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon icon="tasks" active={focused} />
           ),
         }}
       />
       <Tabs.Screen
         name="partner"
         options={{
-          title: t('tabBar.partner'),
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
+          title: 'Dopamigo',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon icon="pet" active={focused} />
           ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: t('tabBar.profile'),
-          tabBarIcon: ({ color }) => (
-            // need to fix this later to show the correct icon, which could be the commented one
-            // <IconSymbol size={28} name={"accountCircle.fill" as IconSymbolName} color={color} />
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
+          title: 'Perfil',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon icon="profile" active={focused} />
           ),
         }}
       />
