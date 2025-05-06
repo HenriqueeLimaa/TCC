@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, Button } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { TaskItem } from "./taskItem";
 import { Text } from "../shared";
+import { Ionicons } from "@expo/vector-icons";
 
 interface TasksProps {
   title: string;
@@ -19,12 +20,18 @@ export const Tasks: React.FC<TasksProps> = ({ title, tasks }) => {
     <View>
       <View style={styles.taskHeader}>
         <Text style={styles.title}>{title}</Text>
-        <Button title="arrowIcon" onPress={toggleTasks} />
+        <TouchableOpacity onPress={toggleTasks}>
+          <Ionicons name={showTasks ? "chevron-up" : "chevron-down"} color={'#525252'} size={24} />
+        </TouchableOpacity>
       </View>
       {showTasks && (
         <ScrollView>
           {tasks.map((task, index) => (
-            <TaskItem key={index} />
+            <TaskItem 
+              key={index} 
+              isFirst={index === 0}
+              isLast={index === tasks.length - 1}
+            />
           ))}
         </ScrollView>
       )}
@@ -42,6 +49,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     lineHeight: 28,
-    fontWeight: "medium",
+    fontWeight: "600",
+    color: "#181818",
   },
 });

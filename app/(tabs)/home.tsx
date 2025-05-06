@@ -27,7 +27,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   contentContainer: {
-    marginTop: 170, // Espaço para o Header
     width: '100%',
+    marginTop: 130, // spacement for the header
   },
 });

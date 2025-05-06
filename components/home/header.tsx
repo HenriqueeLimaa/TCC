@@ -132,7 +132,7 @@ const CalendarCarousel = React.forwardRef<
             )}
             <Text style={[
               styles.dateText,
-              selectedDayIndex === index && styles.selectedDayText
+              ...(selectedDayIndex === index ? [styles.selectedDayText] : [])
             ]}>
               {item.day}
             </Text>
