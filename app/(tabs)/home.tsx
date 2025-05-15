@@ -1,9 +1,11 @@
-import React from "react";
-import { Header, Tasks, SunflowerButton } from "@/components/home";
+import React, { useState } from "react";
+import { Header, Tasks, SunflowerButton, AddTaskModal } from "@/components/home";
 import { PageContainer } from "@/components/shared";
 import { StyleSheet, View } from "react-native";
 
 export default function HomeScreen() {
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  
   // Maybe we could first ask for the user goals, that are the things that they
   //  want to achieve in their routine. Then we ask for a text with a limited number
   // of characters to know more about the person routine and improve the prompt to gpt.
@@ -22,7 +24,7 @@ export default function HomeScreen() {
   ];
   
   const handleSunflowerPress = () => {
-    console.log('Sunflower button pressed');
+    setShowAddTaskModal(true);
   };
   
   return (
@@ -35,6 +37,11 @@ export default function HomeScreen() {
       <View style={styles.floatingButtonContainer}>
         <SunflowerButton onPress={handleSunflowerPress} />
       </View>
+      
+      <AddTaskModal 
+        visible={showAddTaskModal}
+        onClose={() => setShowAddTaskModal(false)}
+      />
     </PageContainer>
   );
 }
