@@ -9,6 +9,8 @@ import {
   PanResponder,
   TextInput,
   ScrollView,
+  Keyboard,
+  KeyboardEvent,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { Text } from "../shared";
@@ -24,8 +26,15 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
   visible,
   onClose,
 }) => {
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  
   const translateY = useRef(new Animated.Value(0)).current;
-  const modalHeight = Dimensions.get("window").height * 0.7;
+  const defaultModalHeight = Dimensions.get("window").height * 0.8;
+
+  const modalHeight = isKeyboardVisible 
+    ? defaultModalHeight - keyboardHeight * 0.6 
+    : defaultModalHeight;
 
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -88,6 +97,28 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     setShowTimePicker(false);
     setTime(currentTime);
   };
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      (event: KeyboardEvent) => {
+        setKeyboardHeight(event.endCoordinates.height);
+        setIsKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+        setIsKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   return (
     <Modal
