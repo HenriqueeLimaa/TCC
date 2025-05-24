@@ -1,17 +1,20 @@
 import React, { ReactNode } from "react";
-import { View, StyleSheet, StatusBar } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const PageContainer = ({ children }: { children: ReactNode }) => {
-  return <View style={styles.pageContainer}>{children}</View>;
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={{ backgroundColor: "#FFFFFF", paddingTop: insets.top + 16 }}>
+      <View style={[styles.pageContent]}>{children}</View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-  pageContainer: {
+  pageContent: {
     backgroundColor: "#F4F4F5",
-    width: "100%",
-    height: "100%",
     paddingHorizontal: 20,
-    paddingVertical: 30,
-    marginTop: StatusBar.currentHeight,
+    paddingTop: 32,
   },
 });

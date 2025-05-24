@@ -1,40 +1,82 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Dimensions, TouchableOpacity } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Text } from "../shared";
 
 const DAYS_OF_WEEK = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
-const DAYS_OF_WEEK_FULL = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-const MONTHS = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const DAYS_OF_WEEK_FULL = [
+  "Domingo",
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado",
+];
+const MONTHS = [
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
+];
 const { width } = Dimensions.get("window");
 const DAY_ITEM_WIDTH = width / 7;
 
 interface CalendarCarouselProps {
-  onDateSelect: (date: { day: number; weekDay: string; date: Date; isCurrentMonth: boolean; isToday: boolean }) => void;
+  onDateSelect: (date: {
+    day: number;
+    weekDay: string;
+    date: Date;
+    isCurrentMonth: boolean;
+    isToday: boolean;
+  }) => void;
   ref?: React.RefObject<{
-    navigateDay: (direction: 'next' | 'prev') => void;
+    navigateDay: (direction: "next" | "prev") => void;
   }>;
 }
 
 const CalendarCarousel = React.forwardRef<
-  { navigateDay: (direction: 'next' | 'prev') => void },
+  { navigateDay: (direction: "next" | "prev") => void },
   CalendarCarouselProps
 >(({ onDateSelect }, ref) => {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
-  const [daysInMonth, setDaysInMonth] = useState<{ day: number; weekDay: string; date: Date; isCurrentMonth: boolean; isToday: boolean }[]>([]);
+  const [daysInMonth, setDaysInMonth] = useState<
+    {
+      day: number;
+      weekDay: string;
+      date: Date;
+      isCurrentMonth: boolean;
+      isToday: boolean;
+    }[]
+  >([]);
   const [todayIndex, setTodayIndex] = useState(0);
 
   React.useImperativeHandle(ref, () => ({
-    navigateDay: (direction: 'next' | 'prev') => {
-      const newIndex = direction === 'next' 
-        ? Math.min(selectedDayIndex + 1, daysInMonth.length - 1)
-        : Math.max(selectedDayIndex - 1, 0);
-      
+    navigateDay: (direction: "next" | "prev") => {
+      const newIndex =
+        direction === "next"
+          ? Math.min(selectedDayIndex + 1, daysInMonth.length - 1)
+          : Math.max(selectedDayIndex - 1, 0);
+
       if (newIndex !== selectedDayIndex) {
         handleDayPress(newIndex);
       }
-    }
+    },
   }));
 
   useEffect(() => {
@@ -45,10 +87,10 @@ const CalendarCarousel = React.forwardRef<
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
-    
+
     const currentDay = today.getDate();
     const currentDayOfWeek = today.getDay();
-    
+
     const daysToSubtract = currentDayOfWeek;
     const firstDay = new Date(year, month, currentDay - daysToSubtract);
 
@@ -56,31 +98,32 @@ const CalendarCarousel = React.forwardRef<
     for (let i = 0; i < 14; i++) {
       const date = new Date(firstDay);
       date.setDate(firstDay.getDate() + i);
-      
-      const isToday = date.getDate() === today.getDate() && 
-                     date.getMonth() === today.getMonth() && 
-                     date.getFullYear() === today.getFullYear();
-      
+
+      const isToday =
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear();
+
       days.push({
         day: date.getDate(),
         weekDay: DAYS_OF_WEEK[date.getDay()],
         date: date,
         isCurrentMonth: date.getMonth() === month,
-        isToday: isToday
+        isToday: isToday,
       });
 
       if (isToday) {
         setTodayIndex(i);
       }
     }
-    
+
     setDaysInMonth(days);
-    
+
     setSelectedDayIndex(daysToSubtract);
     if (onDateSelect && days.length > daysToSubtract) {
       onDateSelect(days[daysToSubtract]);
     }
-    
+
     setTimeout(() => {
       scrollViewRef.current?.scrollTo({
         x: DAY_ITEM_WIDTH * (daysToSubtract > 0 ? daysToSubtract - 1 : 0),
@@ -91,11 +134,11 @@ const CalendarCarousel = React.forwardRef<
 
   const handleDayPress = (index: number) => {
     setSelectedDayIndex(index);
-    
+
     if (onDateSelect && daysInMonth.length > index) {
       onDateSelect(daysInMonth[index]);
     }
-    
+
     scrollViewRef.current?.scrollTo({
       x: DAY_ITEM_WIDTH * (index > 0 ? index - 1 : 0),
       animated: true,
@@ -118,137 +161,158 @@ const CalendarCarousel = React.forwardRef<
             key={index}
             style={[
               styles.dayItem,
-              !item.isCurrentMonth && styles.differentMonthDay
+              !item.isCurrentMonth && styles.differentMonthDay,
             ]}
             onPress={() => handleDayPress(index)}
           >
-            <Text style={styles.dayText}>
-              {item.weekDay}
-            </Text>
+            <Text style={styles.dayText}>{item.weekDay}</Text>
             {selectedDayIndex === index && (
               <View style={styles.selectedCircleContainer}>
                 <View style={styles.selectedDayCircle} />
               </View>
             )}
-            <Text style={[
-              styles.dateText,
-              ...(selectedDayIndex === index ? [styles.selectedDayText] : [])
-            ]}>
+            <Text
+              style={[
+                styles.dateText,
+                ...(selectedDayIndex === index ? [styles.selectedDayText] : []),
+              ]}
+            >
               {item.day}
             </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
-  )
+  );
 });
 
 export const Header = () => {
-  const [selectedDate, setSelectedDate] = useState<{ day: number; weekDay: string; date: Date; isCurrentMonth: boolean; isToday: boolean } | null>(null);
-  const calendarRef = useRef<{ navigateDay: (direction: 'next' | 'prev') => void }>(null);
-  
+  const [selectedDate, setSelectedDate] = useState<{
+    day: number;
+    weekDay: string;
+    date: Date;
+    isCurrentMonth: boolean;
+    isToday: boolean;
+  } | null>(null);
+  const calendarRef = useRef<{
+    navigateDay: (direction: "next" | "prev") => void;
+  }>(null);
+
   const formatDate = (date: { date: Date }) => {
-    if (!date) return '';
+    if (!date) return "";
     const day = date.date.getDate();
     const month = MONTHS[date.date.getMonth()];
     return `${DAYS_OF_WEEK_FULL[date.date.getDay()]}, ${day} de ${month}`;
-  }
-  
+  };
+
   const getHeaderTitle = (date: { date: Date; isToday: boolean }) => {
-    if (!date) return 'Hoje';
-    
+    if (!date) return "Hoje";
+
     if (date.isToday) {
-      return 'Hoje';
+      return "Hoje";
     }
-    
+
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-    
+
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
-    
+
     const selectedDate = date.date;
-    
-    if (selectedDate.getDate() === tomorrow.getDate() && 
-        selectedDate.getMonth() === tomorrow.getMonth() && 
-        selectedDate.getFullYear() === tomorrow.getFullYear()) {
-      return 'Amanhã';
+
+    if (
+      selectedDate.getDate() === tomorrow.getDate() &&
+      selectedDate.getMonth() === tomorrow.getMonth() &&
+      selectedDate.getFullYear() === tomorrow.getFullYear()
+    ) {
+      return "Amanhã";
     }
-    
-    if (selectedDate.getDate() === yesterday.getDate() && 
-        selectedDate.getMonth() === yesterday.getMonth() && 
-        selectedDate.getFullYear() === yesterday.getFullYear()) {
-      return 'Ontem';
+
+    if (
+      selectedDate.getDate() === yesterday.getDate() &&
+      selectedDate.getMonth() === yesterday.getMonth() &&
+      selectedDate.getFullYear() === yesterday.getFullYear()
+    ) {
+      return "Ontem";
     }
-    
+
     return DAYS_OF_WEEK_FULL[selectedDate.getDay()];
-  }
-  
-  const handleDateSelect = (date: { day: number; weekDay: string; date: Date; isCurrentMonth: boolean; isToday: boolean }) => {
+  };
+
+  const handleDateSelect = (date: {
+    day: number;
+    weekDay: string;
+    date: Date;
+    isCurrentMonth: boolean;
+    isToday: boolean;
+  }) => {
     setSelectedDate(date);
-  }
-  
-  const handleNavigate = (direction: 'next' | 'prev') => {
+  };
+
+  const handleNavigate = (direction: "next" | "prev") => {
     if (calendarRef.current) {
       calendarRef.current.navigateDay(direction);
     }
-  }
-  
+  };
+
   return (
     <View style={styles.headerContainer}>
       <View style={styles.titleContainer}>
         <TouchableOpacity
           style={styles.arrowButton}
-          onPress={() => handleNavigate('prev')}
+          onPress={() => handleNavigate("prev")}
         >
           <Ionicons name="chevron-back" size={24} color="#CCCCCC" />
         </TouchableOpacity>
-        
+
         <View style={styles.titleTextContainer}>
-          <Text style={styles.title}>{getHeaderTitle(selectedDate || { date: new Date(), isToday: true })}</Text>
-          <Text style={styles.subtitle}>{selectedDate ? formatDate(selectedDate) : ''}</Text>
+          <Text style={styles.title}>
+            {getHeaderTitle(
+              selectedDate || { date: new Date(), isToday: true }
+            )}
+          </Text>
+          <Text style={styles.subtitle}>
+            {selectedDate ? formatDate(selectedDate) : ""}
+          </Text>
         </View>
-        
+
         <TouchableOpacity
           style={styles.arrowButton}
-          onPress={() => handleNavigate('next')}
+          onPress={() => handleNavigate("next")}
         >
           <Ionicons name="chevron-forward" size={24} color="#CCCCCC" />
         </TouchableOpacity>
       </View>
-      
-      <CalendarCarousel 
-        ref={calendarRef}
-        onDateSelect={handleDateSelect} 
-      />
+
+      <CalendarCarousel ref={calendarRef} onDateSelect={handleDateSelect} />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
-    width: Dimensions.get('window').width,
-    position: 'absolute',
+    width: Dimensions.get("window").width,
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     paddingBottom: 16,
     paddingHorizontal: 16,
     zIndex: 10,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     marginBottom: 10,
   },
   titleTextContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
   },
   title: {
@@ -259,23 +323,23 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#666666',
+    color: "#666666",
     marginBottom: 10,
   },
   arrowButton: {
     padding: 0,
     width: 44,
     height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   arrowText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#00CC66',
+    fontWeight: "bold",
+    color: "#00CC66",
   },
   carouselContainer: {
-    width: '100%',
+    width: "100%",
   },
   daysContainer: {
     paddingHorizontal: 0,
@@ -283,35 +347,35 @@ const styles = StyleSheet.create({
   dayItem: {
     width: DAY_ITEM_WIDTH - 4,
     height: 65,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   dayItemContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     height: 65,
   },
   selectedCircleContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 28,
     left: 0,
     right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     zIndex: 1,
   },
   selectedDayCircle: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#00CC66',
+    backgroundColor: "#00CC66",
   },
   selectedDayText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     zIndex: 2,
   },
   selectedDayItem: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   differentMonthDay: {
     opacity: 0.6,
@@ -319,14 +383,14 @@ const styles = StyleSheet.create({
   dayText: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#999999',
-    textTransform: 'uppercase',
+    color: "#999999",
+    textTransform: "uppercase",
     marginBottom: 8,
   },
   dateText: {
-    fontSize: 22,
-    lineHeight: 28,
-    fontWeight: '600',
-    color: '#333333',
+    fontSize: 18,
+    paddingBottom: 6,
+    fontWeight: "600",
+    color: "#333333",
   },
 });

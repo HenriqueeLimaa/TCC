@@ -8,8 +8,15 @@ type BodyTextProps = {
 };
 
 export const BodyText = ({ children, style }: BodyTextProps) => {
-  const defaultAndOptionalStyles: TextStyle[] = [styles.bodyText, ...(Array.isArray(style) ? style : [style])].filter(Boolean) as TextStyle[];
-  return <Text style={defaultAndOptionalStyles} fontFamily="regular">{children}</Text>;
+  const defaultAndOptionalStyles: TextStyle[] = [
+    styles.bodyText,
+    ...(Array.isArray(style) ? style : [style]),
+  ].filter(Boolean) as TextStyle[];
+  return (
+    <Text style={defaultAndOptionalStyles} fontFamily="regular">
+      {children}
+    </Text>
+  );
 };
 
 const styles = StyleSheet.create({

@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Platform } from "react-native";
 import { useFonts } from "expo-font";
-import { Stack, useRouter, useSegments, SplashScreen as RouterSplashScreen } from "expo-router";
+import {
+  Stack,
+  useRouter,
+  useSegments,
+  SplashScreen as RouterSplashScreen,
+} from "expo-router";
 import {
   DarkTheme,
   DefaultTheme,
@@ -13,28 +18,28 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { LoginStateProvider } from "@/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import '../i18n';
+import "../i18n";
 import React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  // just to make sure the token is loaded before the app tries to use it
   const [initialAccessToken, setInitialAccessToken] = useState<string | null>(
-    ""
+    null
   );
   const [isNavigationReady, setIsNavigationReady] = useState(false);
   const router = useRouter();
   const segments = useSegments();
   const colorScheme = useColorScheme();
-  
+
   // Carregando as fontes Roboto com a estrutura correta
   const [fontsLoaded] = useFonts({
-    'Roboto-Regular': require('../assets/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf'),
-    'Roboto-Italic': require('../assets/fonts/Roboto/Roboto-Italic-VariableFont_wdth,wght.ttf'),
-    'Roboto-Medium': require('../assets/fonts/Roboto/static/Roboto_SemiCondensed-Medium.ttf'),
-    'Roboto-Bold': require('../assets/fonts/Roboto/static/Roboto_SemiCondensed-Bold.ttf'),
+    "Roboto-Regular": require("../assets/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf"),
+    "Roboto-Italic": require("../assets/fonts/Roboto/Roboto-Italic-VariableFont_wdth,wght.ttf"),
+    "Roboto-Medium": require("../assets/fonts/Roboto/static/Roboto_SemiCondensed-Medium.ttf"),
+    "Roboto-Bold": require("../assets/fonts/Roboto/static/Roboto_SemiCondensed-Bold.ttf"),
   });
 
   useEffect(() => {
@@ -48,16 +53,7 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    // Only execute navigation logic when the component is fully mounted and ready
     if (isNavigationReady && fontsLoaded) {
-      // Uncomment this when you want to check for token
-      // if (initialAccessToken !== null) {
-      //   router.replace("/(tabs)/home");
-      // } else {
-      //   router.replace("/signIn");
-      // }
-      
-      // For now, since you're forcing navigation regardless of token
       router.replace("/(tabs)/home");
     }
   }, [isNavigationReady, fontsLoaded, initialAccessToken, router]);
@@ -73,17 +69,21 @@ export default function RootLayout() {
   }
 
   return (
-    <LoginStateProvider initialAccessToken={initialAccessToken}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <StatusBar style="dark" backgroundColor="#FFFFFF" />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="signIn" />
-          <Stack.Screen name="signUp" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="pageNotFound" />
-        </Stack>
-      </ThemeProvider>
-    </LoginStateProvider>
+    <GestureHandlerRootView>
+      <LoginStateProvider initialAccessToken={initialAccessToken}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <StatusBar style="dark" backgroundColor="#FFFFFF" />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="signIn" />
+            <Stack.Screen name="signUp" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="pageNotFound" />
+          </Stack>
+        </ThemeProvider>
+      </LoginStateProvider>
+    </GestureHandlerRootView>
   );
 }

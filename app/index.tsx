@@ -11,7 +11,6 @@ export default function AuthPage() {
   const { accessToken } = useLoginState();
   const { t } = useTranslation();
 
-  // If user is already logged in, redirect to home
   if (accessToken) {
     return <Redirect href="/(tabs)/home" />;
   }
@@ -22,7 +21,6 @@ export default function AuthPage() {
       <BodyText style={styles.instructionsText}>
         {t("welcomePage.subtitle")}
       </BodyText>
-      {/* Only a placeholder, must delete this later */}
       <View style={styles.imagePlaceholder}>
         <BodyText>Image placeholder</BodyText>
       </View>

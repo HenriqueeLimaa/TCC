@@ -10,8 +10,11 @@ interface HourIconProps {
   size?: number;
 }
 
-export const HourIcon: React.FC<HourIconProps> = ({ taskHour, hourType, size = 28 }) => {
-  // Selecionar o ícone correto com base no horário
+export const HourIcon: React.FC<HourIconProps> = ({
+  taskHour,
+  hourType,
+  size = 28,
+}) => {
   const getIconSource = () => {
     switch (hourType) {
       case "morning":
@@ -25,48 +28,48 @@ export const HourIcon: React.FC<HourIconProps> = ({ taskHour, hourType, size = 2
     }
   };
 
-  // Cores de fundo para cada período do dia
   const getBackgroundColor = () => {
     switch (hourType) {
       case "morning":
-        return "rgba(255, 195, 0, 0.25)"; // Amarelo claro para manhã
+        return "rgba(255, 195, 0, 0.25)";
       case "afternoon":
-        return "rgba(25, 157, 227, 0.20)"; // Laranja claro para tarde
+        return "rgba(25, 157, 227, 0.20)";
       case "night":
-        return "rgba(100, 100, 255, 0.25)"; // Azul claro para noite
+        return "rgba(100, 100, 255, 0.25)";
       default:
-        return "rgba(205, 121, 171, 0.25)"; // Cor padrão (mesma do taskIconMock)
+        return "rgba(205, 121, 171, 0.25)";
     }
   };
 
-  // Cores do texto para cada período do dia
   const getTextColor = () => {
     switch (hourType) {
       case "morning":
-        return "#EE8B00"; // Cor para manhã
+        return "#EE8B00";
       case "afternoon":
-        return "#0A70B9"; // Cor para tarde
+        return "#0A70B9";
       case "night":
-        return "#000CB8"; // Cor para noite
+        return "#000CB8";
       default:
-        return "#CD79AB"; // Cor padrão
+        return "#CD79AB";
     }
   };
 
   return (
-    <View 
+    <View
       style={[
-        styles.iconBackground, 
+        styles.iconBackground,
         {
-          backgroundColor: getBackgroundColor() 
-        }
+          backgroundColor: getBackgroundColor(),
+        },
       ]}
     >
-      <Image 
-        source={getIconSource()} 
-        style={{ width: size * 0.7, height: size * 0.7 }} 
+      <Image
+        source={getIconSource()}
+        style={{ width: size * 0.7, height: size * 0.7 }}
       />
-      <Text style={[styles.taskHour, { color: getTextColor() }]}>{taskHour}</Text>
+      <Text style={[styles.taskHour, { color: getTextColor() }]}>
+        {taskHour}
+      </Text>
     </View>
   );
 };
@@ -74,14 +77,14 @@ export const HourIcon: React.FC<HourIconProps> = ({ taskHour, hourType, size = 2
 const styles = StyleSheet.create({
   iconBackground: {
     flexDirection: "row",
-    width: 70,
-    height: 25,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
   },
   taskHour: {
-    fontSize: 14,
-    marginLeft: 4
-  }
+    fontSize: 12,
+    marginLeft: 4,
+  },
 });

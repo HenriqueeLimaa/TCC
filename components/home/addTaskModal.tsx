@@ -28,12 +28,12 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
 }) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  
+
   const translateY = useRef(new Animated.Value(0)).current;
   const defaultModalHeight = Dimensions.get("window").height * 0.8;
 
-  const modalHeight = isKeyboardVisible 
-    ? defaultModalHeight - keyboardHeight * 0.6 
+  const modalHeight = isKeyboardVisible
+    ? defaultModalHeight - keyboardHeight * 0.6
     : defaultModalHeight;
 
   const [date, setDate] = useState(new Date());
@@ -182,6 +182,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                       <TextInput
                         placeholder="Ex: Estudar para a prova"
                         style={styles.textInput}
+                        placeholderTextColor="#999999"
                       />
                     </View>
                   </View>
@@ -192,6 +193,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                   <TextInput
                     placeholder="Ex: Prova de inglês na sexta-feira"
                     style={styles.textInput}
+                    placeholderTextColor="#999999"
                   />
                 </View>
 
@@ -263,9 +265,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                     style={styles.goalSelectorButton}
                   >
                     <Text style={styles.goalSelectorText}>
-                      {selectedGoal
-                        ? selectedGoal
-                        : "Selecione uma meta (opcional)"}
+                      {selectedGoal ? selectedGoal : "Selecionar uma meta"}
                     </Text>
                     <Ionicons
                       name={isGoalDropdownOpen ? "chevron-up" : "chevron-down"}
@@ -333,24 +333,23 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
-    width: "100%",
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: 20,
     lineHeight: 32,
     fontWeight: "700",
     textAlign: "center",
   },
   headerButton: {
-    padding: 5,
+    padding: 16,
   },
   cancelButton: {
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 24,
     color: "#999999",
   },
   saveButton: {
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 24,
     fontWeight: "700",
     color: "#00CC66",
@@ -447,8 +446,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   goalSelectorText: {
-    fontSize: 16,
-    lineHeight: 20,
+    fontSize: 14,
     color: "#333333",
   },
   chevronIcon: {
@@ -478,7 +476,7 @@ const styles = StyleSheet.create({
     color: "#333333",
   },
   scrollViewContent: {
-    paddingBottom: 20,
+    paddingBottom: 116,
     alignItems: "center",
     width: "100%",
   },

@@ -20,10 +20,6 @@ export default function SignInPage() {
   const disableSignInButton = !email.includes("@") || +password.length < 8;
 
   const handleSignInButton = async () => {
-    // Here we have the accessToken field on the loginState context
-    // and then navigate to the home page. While we arent really calling
-    // the API, we can just set a random token here and use this
-    // @react-native-async-storage/async-storage lib
     try {
       const accessTokenMock = "4815162342";
       setAccessToken(accessTokenMock);

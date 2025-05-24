@@ -9,10 +9,10 @@ interface TaskItemProps {
   taskTime?: string;
 }
 
-export const TaskItem: React.FC<TaskItemProps> = ({ 
-  isFirst = false, 
+export const TaskItem: React.FC<TaskItemProps> = ({
+  isFirst = false,
   isLast = false,
-  taskTime = ''
+  taskTime = "",
 }) => {
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -20,42 +20,45 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     setIsCompleted(!isCompleted);
   };
 
-  // Determinar o período do dia com base no horário da tarefa
   const getHourType = () => {
     const hour = parseInt(taskTime.split(":")[0], 10);
-    
+
     if (hour >= 5 && hour < 12) {
       return "morning";
     } else if (hour >= 12 && hour < 18) {
       return "afternoon";
     } else {
-      return 'night';
+      return "night";
     }
   };
 
   return (
-    <View style={[
-      styles.taskItem,
-      !isFirst && { marginTop: 4 },
-      !isLast && { marginBottom: 4 }
-    ]}>
+    <View
+      style={[
+        styles.taskItem,
+        !isFirst && { marginTop: 4 },
+        !isLast && { marginBottom: 4 },
+      ]}
+    >
       <View style={styles.taskItemLeft}>
         <View style={styles.iconBackground}>
-          <Image 
-            source={require('../../assets/images/taskIconMock.png')} 
-            style={styles.icon} 
+          <Image
+            source={require("../../assets/images/taskIconMock.png")}
+            style={styles.icon}
           />
         </View>
         <Text style={styles.taskTitle}>Task Title</Text>
       </View>
       <View style={styles.taskItemRight}>
         <View style={styles.rightControls}>
-          {taskTime && <HourIcon taskHour={taskTime} hourType={getHourType()} size={24} />}
-          <TouchableOpacity 
+          {taskTime && (
+            <HourIcon taskHour={taskTime} hourType={getHourType()} size={24} />
+          )}
+          <TouchableOpacity
             style={[
-              styles.radioButton, 
-              isCompleted && styles.radioButtonCompleted
-            ]} 
+              styles.radioButton,
+              isCompleted && styles.radioButtonCompleted,
+            ]}
             onPress={toggleTaskCompletion}
           >
             {isCompleted ? (
@@ -78,9 +81,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   taskItemLeft: {
-   flexDirection: "row",
-   alignItems: "center",
-   justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   taskItemRight: {
     flexDirection: "column",
@@ -104,8 +107,8 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   radioButtonCompleted: {
-    backgroundColor: "#00CC66", // Verde
-    borderColor: 'transparent',
+    backgroundColor: "#00CC66",
+    borderColor: "transparent",
   },
   icon: {
     width: 20,
@@ -115,7 +118,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 50,
-    backgroundColor: "rgba(205, 121, 171, 0.25)", // provisory color
+    backgroundColor: "rgba(205, 121, 171, 0.25)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -128,5 +131,5 @@ const styles = StyleSheet.create({
   taskTime: {
     fontSize: 14,
     color: "#666666",
-  }
+  },
 });

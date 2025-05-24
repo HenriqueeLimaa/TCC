@@ -8,10 +8,15 @@ type SubtitleProps = {
 };
 
 export const Subtitle = ({ children, style }: SubtitleProps) => {
-  const defaultAndOptionalStyles = [styles.subtitle, ...(Array.isArray(style) ? style : [style])].filter(
-    (s): s is TextStyle => s !== undefined
+  const defaultAndOptionalStyles = [
+    styles.subtitle,
+    ...(Array.isArray(style) ? style : [style]),
+  ].filter((s): s is TextStyle => s !== undefined);
+  return (
+    <Text style={defaultAndOptionalStyles} fontFamily="medium">
+      {children}
+    </Text>
   );
-  return <Text style={defaultAndOptionalStyles} fontFamily="medium">{children}</Text>;
 };
 
 const styles = StyleSheet.create({

@@ -17,24 +17,28 @@ export const Tasks: React.FC<TasksProps> = ({ title, tasks }) => {
   };
 
   return (
-    <View>
+    <View style={{ marginTop: 16 }}>
       <View style={styles.taskHeader}>
         <Text style={styles.title}>{title}</Text>
         <TouchableOpacity onPress={toggleTasks}>
-          <Ionicons name={showTasks ? "chevron-up" : "chevron-down"} color={'#525252'} size={24} />
+          <Ionicons
+            name={showTasks ? "chevron-up" : "chevron-down"}
+            color={"#525252"}
+            size={24}
+          />
         </TouchableOpacity>
       </View>
       {showTasks && (
-        <ScrollView>
+        <View>
           {tasks.map((task, index) => (
-            <TaskItem 
-              key={task.id} 
+            <TaskItem
+              key={task.id}
               isFirst={index === 0}
               isLast={index === tasks.length - 1}
               taskTime={task.time}
             />
           ))}
-        </ScrollView>
+        </View>
       )}
     </View>
   );

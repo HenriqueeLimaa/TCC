@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { Header, Tasks, SunflowerButton, AddTaskModal } from "@/components/home";
+import {
+  Header,
+  Tasks,
+  SunflowerButton,
+  AddTaskModal,
+} from "@/components/home";
 import { PageContainer } from "@/components/shared";
 import { StyleSheet, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
-  
-  // Maybe we could first ask for the user goals, that are the things that they
-  //  want to achieve in their routine. Then we ask for a text with a limited number
-  // of characters to know more about the person routine and improve the prompt to gpt.
-  
+
   const tasks1Mock = [
     { id: 1, title: "Regar flores", time: "09:30" },
     { id: 2, title: "Lavar roupa", time: "13:30" },
@@ -22,23 +24,25 @@ export default function HomeScreen() {
     { id: 6, title: "Responder emails" },
     { id: 7, title: "Planejar a semana" },
   ];
-  
+
   const handleSunflowerPress = () => {
     setShowAddTaskModal(true);
   };
-  
+
   return (
     <PageContainer>
       <Header />
-      <View style={styles.contentContainer}>
-        <Tasks title="Com horário" tasks={tasks1Mock} />
-        <Tasks title="Em algum momento do dia" tasks={tasks2Mock} />
-      </View>
+      <ScrollView style={styles.contentContainer}>
+        <View style={{ marginBottom: 108 }}>
+          <Tasks title="Com horário" tasks={tasks1Mock} />
+          <Tasks title="Em algum momento do dia" tasks={tasks2Mock} />
+        </View>
+      </ScrollView>
       <View style={styles.floatingButtonContainer}>
         <SunflowerButton onPress={handleSunflowerPress} />
       </View>
-      
-      <AddTaskModal 
+
+      <AddTaskModal
         visible={showAddTaskModal}
         onClose={() => setShowAddTaskModal(false)}
       />
@@ -48,12 +52,11 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   contentContainer: {
-    width: '100%',
-    marginTop: 130, // spacement for the header
+    marginTop: 130,
   },
   floatingButtonContainer: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
-    bottom: 70, // Para ficar 10px acima da TabBar (TabBar geralmente tem 60px de altura)
+    bottom: -24,
   },
 });
