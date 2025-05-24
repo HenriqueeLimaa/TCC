@@ -1,13 +1,10 @@
 export const API_URL = "http://localhost:3000";
 
-export const USER_REGISTER = "/users";
-export const USER_LOGIN = "/auth/login";
+export enum UserRoutes {
+    REGISTER = "/users",
+    LOGIN = "/auth/login",
+}
 
-export const GET_USER_BY_ID = `/users`;
-export const GET_ALL_USERS = "/users";
-
-export const REGISTER_TASK = "/userTasks";
-export const GET_TASKS_BY_USER_ID = "/userTasks/all/"; // eg: /userTasks/all/1/1
-export const EDIT_TASK = "/userTasks/update/"; // eg: /userTasks/update/404e1156-f5a7-4758-b52a-bacffbe2e55f
-export const DELETE_TASK = "/userTasks/update/"; // eg: /userTasks/update/1
-export const GET_USER_TASKS_BY_DATE = "/userTasks/byWeek/"; // eg: /userTasks/byWeek/1
+export enum TaskRoutes {
+    FETCH_BY_WEEK = "/userTasks/byWeek",
+}
