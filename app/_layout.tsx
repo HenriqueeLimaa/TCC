@@ -22,7 +22,6 @@ import "../i18n";
 import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -34,7 +33,6 @@ export default function RootLayout() {
   const segments = useSegments();
   const colorScheme = useColorScheme();
 
-  // Carregando as fontes Roboto com a estrutura correta
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("../assets/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf"),
     "Roboto-Italic": require("../assets/fonts/Roboto/Roboto-Italic-VariableFont_wdth,wght.ttf"),
@@ -53,9 +51,9 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (isNavigationReady && fontsLoaded) {
-      router.replace("/(tabs)/home");
-    }
+    // if (isNavigationReady && fontsLoaded) {
+    //   router.replace("/(tabs)/home");
+    // }
   }, [isNavigationReady, fontsLoaded, initialAccessToken, router]);
 
   useEffect(() => {
