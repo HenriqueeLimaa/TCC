@@ -51,9 +51,9 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    // if (isNavigationReady && fontsLoaded) {
-    //   router.replace("/(tabs)/home");
-    // }
+    if (isNavigationReady && fontsLoaded) {
+      didLoadContent();
+    }
   }, [isNavigationReady, fontsLoaded, initialAccessToken, router]);
 
   useEffect(() => {
@@ -65,6 +65,11 @@ export default function RootLayout() {
   if (!fontsLoaded) {
     return null;
   }
+
+  const didLoadContent = async () => {
+    const accessToken = await AsyncStorage.getItem("accessToken");
+    router.replace(accessToken === null ? "/signIn" : "/(tabs)/home");
+  };
 
   return (
     <GestureHandlerRootView>

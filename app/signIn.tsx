@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLoginState } from "@/hooks";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { userLogin } from "@/api/userService";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -24,9 +25,14 @@ export default function SignInPage() {
 
   const handleSignIn = async () => {
     try {
-      const accessTokenMock = "signin-token-123";
-      setAccessToken(accessTokenMock);
-      await AsyncStorage.setItem("accessToken", accessTokenMock);
+      const loginResult = await userLogin({
+        email,
+        password,
+      });
+
+      const accessToken = loginResult.data["access_token"];
+      setAccessToken(accessToken);
+      await AsyncStorage.setItem("accessToken", accessToken);
       setPassword("");
       router.replace("/(tabs)/home");
     } catch (error) {

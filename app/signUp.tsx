@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   StyleSheet,
   Pressable,
+  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { useLoginState } from "@/hooks";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { registerUser, userLogin } from "@/api/userService";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -19,16 +21,40 @@ export default function SignUpPage() {
   const { email, setEmail, password, setPassword, setAccessToken } =
     useLoginState();
   const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const disableButton =
-    name.trim().length === 0 || !email.includes("@") || password.length < 8;
+    name.trim().length === 0 ||
+    nickname.trim().length === 0 ||
+    !email.includes("@") ||
+    password.length < 8 ||
+    birthDate.length < 10;
+
+  const formatBirthDate = (input: string) => {
+    const [d, m, y] = input.split("/");
+    return `${m}/${d}/${y}`;
+  };
 
   const handleSignUp = async () => {
     try {
-      const accessTokenMock = "signup-token-123";
-      setAccessToken(accessTokenMock);
-      await AsyncStorage.setItem("accessToken", accessTokenMock);
+      await registerUser({
+        name,
+        nickname,
+        email,
+        password,
+        birthDate: formatBirthDate(birthDate),
+      });
+
+      const loginResult = await userLogin({
+        email,
+        password,
+      });
+
+      const accessToken = loginResult.data["access_token"];
+      setAccessToken(accessToken);
+      await AsyncStorage.setItem("accessToken", accessToken);
       setPassword("");
       router.replace("/(tabs)/home");
     } catch (error) {
@@ -38,7 +64,7 @@ export default function SignUpPage() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.formContainer}>
+      <ScrollView style={styles.formContainer}>
         <Text style={styles.title}>{t("signUpPage.title", "Cadastro")}</Text>
 
         <Text style={styles.label}>{t("signUpPage.name", "Nome")}</Text>
@@ -48,6 +74,27 @@ export default function SignUpPage() {
           placeholderTextColor="#aaa"
           value={name}
           onChangeText={setName}
+        />
+
+        <Text style={styles.label}>{t("signUpPage.nickname", "Apelido")}</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ex: Jorginho"
+          placeholderTextColor="#aaa"
+          value={nickname}
+          onChangeText={setNickname}
+        />
+
+        <Text style={styles.label}>
+          {t("signUpPage.birthDate", "Data de Nascimento (dd/mm/aaa)")}
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="01/01/2000"
+          placeholderTextColor="#aaa"
+          keyboardType="numeric"
+          value={birthDate}
+          onChangeText={setBirthDate}
         />
 
         <Text style={styles.label}>{t("signUpPage.email", "E-mail")}</Text>
@@ -104,7 +151,7 @@ export default function SignUpPage() {
             </Text>
           </Pressable>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -113,7 +160,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#7FB87F",
-    paddingTop: 100,
+    paddingTop: 24,
   },
   formContainer: {
     flex: 1,
