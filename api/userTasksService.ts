@@ -7,7 +7,7 @@ export interface UserTask {
     description?: string;
     date: string;
     isCompleted: boolean;
-    difficultyLevel: number;
+    difficultLevel: number;
 }
 
 interface FetchTasksForWeekDTO {
@@ -16,6 +16,19 @@ interface FetchTasksForWeekDTO {
 
 export class UserTaskService {
     async getTasksForWeek(data: FetchTasksForWeekDTO) {
-        return await baseRequest(TaskRoutes.FETCH_BY_WEEK, "GET", data);
+        return await baseRequest(
+            TaskRoutes.FETCH_BY_WEEK,
+            "GET",
+            undefined,
+            data
+        );
+    }
+
+    async createTask(data: UserTask) {
+        return await baseRequest(TaskRoutes.CREATE, "POST", data);
+    }
+
+    async editTask(data: UserTask) {
+        return await baseRequest(`${TaskRoutes.EDIT}/${data.id}`, "PUT", data);
     }
 }

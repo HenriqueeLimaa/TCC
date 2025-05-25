@@ -2,11 +2,17 @@ import axios from "axios";
 import { API_URL } from "@/constants/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const baseRequest = async (url: string, method: string, data?: any) => {
+export const baseRequest = async (
+    url: string,
+    method: string,
+    body?: any,
+    query?: any
+) => {
     try {
         console.log("URL ->", url);
         console.log("METHOD ->", method);
-        console.log("DATA ->", data);
+        console.log("DATA ->", body);
+        console.log("QUERY ->", query);
 
         const token = await AsyncStorage.getItem("accessToken");
 
@@ -23,18 +29,9 @@ export const baseRequest = async (url: string, method: string, data?: any) => {
             headers: headers,
             url: `${API_URL}${url}`,
             method,
+            params: query,
+            data: body,
         };
-
-        if (data) {
-            if (
-                method.toUpperCase() === "GET" ||
-                method.toUpperCase() === "DELETE"
-            ) {
-                config.params = data;
-            } else {
-                config.data = data;
-            }
-        }
 
         const response = await axios(config);
         console.log("==> SUCCESS STATUS:", response.status);

@@ -3,26 +3,36 @@ import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Text, HourIcon } from "../shared";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import { UserTask, UserTaskService } from "@/api/userTasksService";
 
 interface TaskItemProps {
     isFirst?: boolean;
     isLast?: boolean;
-    taskTime?: string;
+    userTask: UserTask;
+    formattedDate?: string;
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({
     isFirst = false,
     isLast = false,
-    taskTime = "",
-}) => {
-    const [isCompleted, setIsCompleted] = useState(false);
+    userTask,
+    formattedDate = undefined,
+}: TaskItemProps) => {
+    const userTaskService = new UserTaskService();
+    const [isCompleted, setIsCompleted] = useState(userTask.isCompleted);
 
-    const toggleTaskCompletion = () => {
-        setIsCompleted(!isCompleted);
+    const toggleTaskCompletion = async () => {
+        const editedTask = { ...userTask, isCompleted: !userTask.isCompleted };
+        const editResponse = await userTaskService.editTask(editedTask);
+        if (editResponse) {
+            setIsCompleted(!isCompleted);
+        } else {
+            alert("Houve um erro, tente novamente");
+        }
     };
 
-    const getHourType = () => {
-        const hour = parseInt(taskTime.split(":")[0], 10);
+    const getHourType = (date: string) => {
+        const hour = parseInt(date.split(":")[0], 10);
 
         if (hour >= 5 && hour < 12) {
             return "morning";
@@ -48,14 +58,14 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                         style={styles.icon}
                     />
                 </View>
-                <Text style={styles.taskTitle}>Task Title</Text>
+                <Text style={styles.taskTitle}>{userTask.title}</Text>
             </View>
             <View style={styles.taskItemRight}>
                 <View style={styles.rightControls}>
-                    {taskTime && (
+                    {formattedDate && formattedDate !== "00:00" && (
                         <HourIcon
-                            taskHour={taskTime}
-                            hourType={getHourType()}
+                            taskHour={formattedDate}
+                            hourType={getHourType(formattedDate)}
                             size={24}
                         />
                     )}

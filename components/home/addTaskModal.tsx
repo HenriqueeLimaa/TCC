@@ -4,7 +4,6 @@ import {
     StyleSheet,
     Modal,
     TouchableOpacity,
-    Dimensions,
     Animated,
     PanResponder,
     TextInput,
@@ -19,11 +18,12 @@ import { Text } from "../shared";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Colors } from "@/constants/Colors";
+import { UserTask } from "@/api/userTasksService";
 
 interface AddTaskModalProps {
     visible: boolean;
     onClose: () => void;
-    onTaskAdded: () => void;
+    onTaskAdded: (task: UserTask) => void;
 }
 
 export const AddTaskModal: React.FC<AddTaskModalProps> = ({
@@ -59,6 +59,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     const [time, setTime] = useState(new Date());
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [hasSetTime, setHasSetTime] = useState(false);
+    const [difficultyLevel, setDifficultyLevel] = useState<string>("");
 
     const panResponder = useRef(
         PanResponder.create({
@@ -147,19 +148,56 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     }, []);
 
     const handleSaveTask = () => {
-        console.log("Salvar tarefa:", {
-            title,
-            description,
-            date,
-            time: hasSetTime ? time : null,
-        });
-        onTaskAdded();
+        const numericDifficulty = parseInt(difficultyLevel, 10);
+        if (title.trim() === "") {
+            alert("O título da tarefa é obrigatório.");
+            return;
+        }
+        if (
+            difficultyLevel.trim() === "" ||
+            isNaN(numericDifficulty) ||
+            numericDifficulty < 1 ||
+            numericDifficulty > 5
+        ) {
+            alert("Por favor, insira um nível de dificuldade válido (1-5).");
+            return;
+        }
+
+        const combinedDateTime = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            hasSetTime ? time.getHours() : 0,
+            hasSetTime ? time.getMinutes() : 0
+        );
+
+        const pad = (num: number) => num.toString().padStart(2, "0");
+        const formattedDateTimeString = `${pad(
+            combinedDateTime.getMonth() + 1
+        )}/${pad(
+            combinedDateTime.getDate()
+        )}/${combinedDateTime.getFullYear()} ${pad(
+            combinedDateTime.getHours()
+        )}:${pad(combinedDateTime.getMinutes())}`;
+
+        const newTask: UserTask = {
+            id: Date.now().toString(),
+            title: title.trim(),
+            description: description.trim() || undefined,
+            date: formattedDateTimeString,
+            isCompleted: false,
+            difficultLevel: numericDifficulty,
+        };
+
+        console.log("Salvar tarefa:", newTask);
+        onTaskAdded(newTask);
         onClose();
         setTitle("");
         setDescription("");
         setDate(new Date());
         setTime(new Date());
         setHasSetTime(false);
+        setDifficultyLevel("");
     };
 
     if (!visible) {
@@ -281,6 +319,36 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                                     numberOfLines={3}
                                     value={description}
                                     onChangeText={setDescription}
+                                />
+                            </View>
+
+                            <View
+                                style={[
+                                    styles.taskField,
+                                    styles.inputContainer,
+                                ]}
+                            >
+                                <Text style={styles.inputLabel}>
+                                    Nível de Dificuldade (1-5)
+                                </Text>
+                                <TextInput
+                                    placeholder="Ex: 3"
+                                    style={styles.textInput}
+                                    placeholderTextColor="#999999"
+                                    keyboardType="numeric"
+                                    value={difficultyLevel}
+                                    onChangeText={(text) => {
+                                        const numericValue = text.replace(
+                                            /[^1-5]/g,
+                                            ""
+                                        );
+                                        setDifficultyLevel(
+                                            numericValue.length <= 1
+                                                ? numericValue
+                                                : ""
+                                        );
+                                    }}
+                                    maxLength={1}
                                 />
                             </View>
 

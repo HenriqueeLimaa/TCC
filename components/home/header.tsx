@@ -405,8 +405,8 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     dateText: {
-        fontSize: 18,
-        paddingBottom: 6,
+        fontSize: 14,
+        paddingBottom: 8,
         fontWeight: "600",
         color: "#333333",
     },

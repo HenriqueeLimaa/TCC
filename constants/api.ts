@@ -7,4 +7,6 @@ export enum UserRoutes {
 
 export enum TaskRoutes {
     FETCH_BY_WEEK = "/userTasks/byWeek",
+    CREATE = "/userTasks",
+    EDIT = "/userTasks/update",
 }

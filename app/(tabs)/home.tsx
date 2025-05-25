@@ -11,6 +11,7 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { UserTask, UserTaskService } from "@/api/userTasksService";
 import { getWeekIdentifier } from "@/utils/dateUtils";
+import { Colors } from "@/constants/Colors";
 
 const formatDateToCompare = (date: Date): string => {
     const year = date.getFullYear();
@@ -19,17 +20,35 @@ const formatDateToCompare = (date: Date): string => {
     return `${year}-${month}-${day}`;
 };
 
+const hasSpecificTime = (dateString: string | undefined): boolean => {
+    if (!dateString || typeof dateString !== "string") {
+        return false;
+    }
+
+    try {
+        const dateObj = new Date(dateString);
+        if (isNaN(dateObj.getTime())) {
+            return false;
+        }
+
+        return dateObj.getUTCHours() !== 0 && dateObj.getUTCMinutes() !== 0;
+    } catch (e) {
+        return false;
+    }
+};
+
 export default function HomeScreen() {
     const [showAddTaskModal, setShowAddTaskModal] = useState(false);
     const [allTasksByWeek, setAllTasksByWeek] = useState<{
         [weekKey: string]: UserTask[];
     }>({});
-    const [displayedTasks, setDisplayedTasks] = useState<UserTask[]>([]);
+    const [tasksWithTime, setTasksWithTime] = useState<UserTask[]>([]);
+    const [tasksAnyTime, setTasksAnyTime] = useState<UserTask[]>([]);
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [forceRefreshKey, setForceRefreshKey] = useState(0); // Para o refresh
+    const [forceRefreshKey, setForceRefreshKey] = useState(0);
 
     const userTaskService = useMemo(() => new UserTaskService(), []);
 
@@ -45,6 +64,22 @@ export default function HomeScreen() {
     useEffect(() => {
         const weekKey = getWeekIdentifier(selectedDate);
         const cachedTasksForWeek = allTasksByWeek[weekKey];
+        const selectedDateStringForComparison =
+            formatDateToCompare(selectedDate);
+
+        const processAndSetDailyTasks = (dailyTasks: UserTask[]) => {
+            const newTasksWithTime: UserTask[] = [];
+            const newTasksAnyTime: UserTask[] = [];
+            dailyTasks.forEach((task) => {
+                if (hasSpecificTime(task.date)) {
+                    newTasksWithTime.push(task);
+                } else {
+                    newTasksAnyTime.push(task);
+                }
+            });
+            setTasksWithTime(newTasksWithTime);
+            setTasksAnyTime(newTasksAnyTime);
+        };
 
         if (cachedTasksForWeek && Array.isArray(cachedTasksForWeek)) {
             console.log(
@@ -53,15 +88,14 @@ export default function HomeScreen() {
             if (isLoading) setIsLoading(false);
             if (error) setError(null);
 
-            const selectedDateStringForComparison =
-                formatDateToCompare(selectedDate);
             const dailyTasks = cachedTasksForWeek.filter((task) => {
-                if (!task.date) {
+                if (!task.date || typeof task.date !== "string") {
                     return false;
                 }
-                return task.date === selectedDateStringForComparison;
+                const taskDatePart = task.date.substring(0, 10);
+                return taskDatePart === selectedDateStringForComparison;
             });
-            setDisplayedTasks(dailyTasks);
+            processAndSetDailyTasks(dailyTasks);
             return;
         }
 
@@ -90,10 +124,11 @@ export default function HomeScreen() {
                     newWeeklyTasks = fetchedData;
                 } else {
                     console.error(
-                        "Fetched tasks are not an array:",
+                        "Fetched tasks data is not an array or is undefined:",
                         fetchedData
                     );
                     setError("Dados de tarefas inválidos recebidos.");
+                    newWeeklyTasks = [];
                 }
             } catch (err) {
                 console.error("Failed to fetch tasks:", err);
@@ -108,22 +143,44 @@ export default function HomeScreen() {
                     [weekKey]: newWeeklyTasks,
                 }));
 
-                const selectedDateStringForComparison =
-                    formatDateToCompare(selectedDate);
                 const dailyTasks = newWeeklyTasks.filter((task) => {
-                    if (!task.date) return false;
-                    return task.date === selectedDateStringForComparison;
+                    if (!task.date || typeof task.date !== "string") {
+                        return false;
+                    }
+                    const taskDatePart = task.date.substring(0, 10);
+                    return taskDatePart === selectedDateStringForComparison;
                 });
-                setDisplayedTasks(dailyTasks);
+                processAndSetDailyTasks(dailyTasks);
                 setIsLoading(false);
             }
         };
 
         fetchAndFilterTasks();
-    }, [selectedDate, userTaskService, forceRefreshKey]);
+    }, [
+        selectedDate,
+        userTaskService,
+        forceRefreshKey,
+        allTasksByWeek,
+        isLoading,
+        error,
+    ]);
 
     const handleAddButtonPress = () => {
         setShowAddTaskModal(true);
+    };
+
+    const onTaskAdded = async (task: UserTask) => {
+        await save(task);
+        refreshTasksForCurrentWeek();
+    };
+
+    const save = async (task: UserTask) => {
+        try {
+            await userTaskService.createTask(task);
+            alert("Tarefa criada com sucesso!");
+        } catch (error) {
+            console.log("Error saving task:", error);
+        }
     };
 
     const refreshTasksForCurrentWeek = useCallback(() => {
@@ -133,14 +190,8 @@ export default function HomeScreen() {
             delete updatedCache[weekKey];
             return updatedCache;
         });
-
         setForceRefreshKey((prevKey) => prevKey + 1);
-        console.log(
-            `Refresh triggered for week ${weekKey}. New refresh key: ${
-                forceRefreshKey + 1
-            }`
-        );
-    }, [selectedDate, forceRefreshKey]);
+    }, [selectedDate]);
 
     return (
         <PageContainer>
@@ -153,7 +204,7 @@ export default function HomeScreen() {
                         { marginTop: styles.headerPlaceholder.height + 10 },
                     ]}
                 >
-                    <ActivityIndicator size="large" color="#4A90E2" />
+                    <ActivityIndicator size="large" color={Colors.primary} />
                     <Text style={styles.statusText}>Carregando tarefas...</Text>
                 </View>
             )}
@@ -168,6 +219,7 @@ export default function HomeScreen() {
                     <Button
                         title="Tentar novamente"
                         onPress={refreshTasksForCurrentWeek}
+                        color={Colors.primary}
                     />
                 </View>
             )}
@@ -182,14 +234,50 @@ export default function HomeScreen() {
             >
                 {!isLoading && !error && (
                     <View>
-                        <Tasks
-                            title={`Tarefas para esse dia`}
-                            tasks={displayedTasks}
-                        />
-                        {displayedTasks.length === 0 && (
+                        {tasksWithTime.length === 0 &&
+                        tasksAnyTime.length === 0 ? (
                             <Text style={styles.noTasksText}>
                                 Nenhuma tarefa para este dia.
                             </Text>
+                        ) : (
+                            <>
+                                <Tasks
+                                    title="Com horário"
+                                    tasks={tasksWithTime}
+                                />
+                                {tasksWithTime.length === 0 &&
+                                    (tasksAnyTime.length > 0 ||
+                                        (tasksAnyTime.length === 0 &&
+                                            tasksWithTime.length === 0 &&
+                                            !isLoading)) && (
+                                        <Text
+                                            style={styles.noTasksInCategoryText}
+                                        >
+                                            Nenhuma tarefa com horário definido.
+                                        </Text>
+                                    )}
+
+                                {tasksWithTime.length > 0 &&
+                                    tasksAnyTime.length > 0 && (
+                                        <View style={styles.listSeparator} />
+                                    )}
+
+                                <Tasks
+                                    title="A qualquer momento do dia"
+                                    tasks={tasksAnyTime}
+                                />
+                                {tasksAnyTime.length === 0 &&
+                                    (tasksWithTime.length > 0 ||
+                                        (tasksAnyTime.length === 0 &&
+                                            tasksWithTime.length === 0 &&
+                                            !isLoading)) && (
+                                        <Text
+                                            style={styles.noTasksInCategoryText}
+                                        >
+                                            Nenhuma tarefa para visualizar.
+                                        </Text>
+                                    )}
+                            </>
                         )}
                     </View>
                 )}
@@ -202,7 +290,7 @@ export default function HomeScreen() {
             <AddTaskModal
                 visible={showAddTaskModal}
                 onClose={() => setShowAddTaskModal(false)}
-                onTaskAdded={refreshTasksForCurrentWeek}
+                onTaskAdded={onTaskAdded}
             />
         </PageContainer>
     );
@@ -212,15 +300,13 @@ const styles = StyleSheet.create({
     headerPlaceholder: {
         height: 130,
     },
-    scrollView: {
-        paddingBottom: 260,
-    },
+    scrollView: { height: "81%" },
     scrollViewContentContainer: {
-        paddingBottom: 108,
+        paddingBottom: 148,
     },
     floatingButtonContainer: {
         position: "absolute",
-        right: 10,
+        right: 0,
         bottom: 0,
         zIndex: 20,
     },
@@ -247,5 +333,17 @@ const styles = StyleSheet.create({
         color: "#666",
         marginTop: 40,
         marginBottom: 20,
+        paddingHorizontal: 20,
+    },
+    noTasksInCategoryText: {
+        textAlign: "center",
+        fontSize: 14,
+        color: "#888",
+        marginTop: 0,
+        marginBottom: 16,
+        paddingHorizontal: 20,
+    },
+    listSeparator: {
+        height: 20,
     },
 });
