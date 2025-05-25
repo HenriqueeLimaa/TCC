@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { TaskItem } from "./taskItem";
 import { Text } from "../shared";
-import { Ionicons } from "@expo/vector-icons";
 import { UserTask } from "@/api/userTasksService";
 
 interface TasksProps {
@@ -21,13 +20,6 @@ export const Tasks: React.FC<TasksProps> = ({ title, tasks }) => {
         <View style={{ marginTop: 16 }}>
             <View style={styles.taskHeader}>
                 <Text style={styles.title}>{title}</Text>
-                <TouchableOpacity onPress={toggleTasks}>
-                    <Ionicons
-                        name={showTasks ? "chevron-up" : "chevron-down"}
-                        color={"#525252"}
-                        size={24}
-                    />
-                </TouchableOpacity>
             </View>
             {showTasks && (
                 <View>

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "../shared";
+import { Colors } from "@/constants/Colors";
 
 const DAYS_OF_WEEK = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 const DAYS_OF_WEEK_FULL = [
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
     arrowText: {
         fontSize: 24,
         fontWeight: "bold",
-        color: "#00CC66",
+        color: Colors.primary,
     },
     carouselContainer: {
         width: "100%",
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
         width: 36,
         height: 36,
         borderRadius: 18,
-        backgroundColor: "#00CC66",
+        backgroundColor: Colors.primary,
     },
     selectedDayText: {
         color: "#FFFFFF",

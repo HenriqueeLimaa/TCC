@@ -1,10 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-    Header,
-    Tasks,
-    SunflowerButton,
-    AddTaskModal,
-} from "@/components/home";
+import { Header, Tasks, AddButton, AddTaskModal } from "@/components/home";
 import { PageContainer } from "@/components/shared";
 import {
     ActivityIndicator,
@@ -17,28 +12,30 @@ import { ScrollView } from "react-native-gesture-handler";
 import { UserTask, UserTaskService } from "@/api/userTasksService";
 import { getWeekIdentifier } from "@/utils/dateUtils";
 
+const formatDateToCompare = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
+
 export default function HomeScreen() {
     const [showAddTaskModal, setShowAddTaskModal] = useState(false);
     const [allTasksByWeek, setAllTasksByWeek] = useState<{
         [weekKey: string]: UserTask[];
     }>({});
-    const [tasksWithTime, setTasksWithTime] = useState<UserTask[]>([]);
-    const [tasksWithoutTime, setTasksWithoutTime] = useState<UserTask[]>([]);
+    const [displayedTasks, setDisplayedTasks] = useState<UserTask[]>([]);
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [forceRefreshKey, setForceRefreshKey] = useState(0); // Para o refresh
 
     const userTaskService = useMemo(() => new UserTaskService(), []);
 
     const handleDateSelectedFromHeader = useCallback(
         (newDate: Date) => {
-            const currentWeekKey = getWeekIdentifier(selectedDate);
-            const newWeekKey = getWeekIdentifier(newDate);
-            if (
-                currentWeekKey !== newWeekKey ||
-                selectedDate.toDateString() !== newDate.toDateString()
-            ) {
+            if (selectedDate.toDateString() !== newDate.toDateString()) {
                 setSelectedDate(newDate);
             }
         },
@@ -46,74 +43,86 @@ export default function HomeScreen() {
     );
 
     useEffect(() => {
-        const loadTasks = async () => {
-            console.log("fetching...");
-            const weekKey = getWeekIdentifier(selectedDate);
-            const cachedTasks = allTasksByWeek[weekKey];
-            if (cachedTasks && cachedTasks.length > 0) {
-                categorizeAndSetTasks(allTasksByWeek[weekKey]);
-                setError(null);
-                return;
-            }
+        const weekKey = getWeekIdentifier(selectedDate);
+        const cachedTasksForWeek = allTasksByWeek[weekKey];
 
+        if (cachedTasksForWeek && Array.isArray(cachedTasksForWeek)) {
+            console.log(
+                `Cache hit for week ${weekKey}. Filtering for date: ${selectedDate.toDateString()}`
+            );
+            if (isLoading) setIsLoading(false);
+            if (error) setError(null);
+
+            const selectedDateStringForComparison =
+                formatDateToCompare(selectedDate);
+            const dailyTasks = cachedTasksForWeek.filter((task) => {
+                if (!task.date) {
+                    return false;
+                }
+                return task.date === selectedDateStringForComparison;
+            });
+            setDisplayedTasks(dailyTasks);
+            return;
+        }
+
+        const fetchAndFilterTasks = async () => {
+            console.log(
+                `Cache miss for week ${weekKey} (or refresh). Fetching for date: ${selectedDate.toDateString()}`
+            );
             setIsLoading(true);
             setError(null);
+            let newWeeklyTasks: UserTask[] = [];
+
             try {
                 const day = selectedDate.getDate();
                 const month = selectedDate.getMonth() + 1;
                 const year = selectedDate.getFullYear();
                 const formattedMonth = String(month).padStart(2, "0");
                 const formattedDay = String(day).padStart(2, "0");
-                const formattedDate = `${formattedMonth}/${formattedDay}/${year}`;
-                const fetchedTasks = await userTaskService.getTasksForWeek({
-                    date: formattedDate,
+                const formattedDateForAPI = `${formattedMonth}/${formattedDay}/${year}`;
+
+                const requestData = await userTaskService.getTasksForWeek({
+                    date: formattedDateForAPI,
                 });
+                const fetchedData = requestData.data;
 
-                if (!fetchedTasks || fetchedTasks.length === 0) {
-                    setIsLoading(false);
-                    setTasksWithTime([]);
-                    setTasksWithoutTime([]);
-                    return;
+                if (fetchedData) {
+                    newWeeklyTasks = fetchedData;
+                } else {
+                    console.error(
+                        "Fetched tasks are not an array:",
+                        fetchedData
+                    );
+                    setError("Dados de tarefas inválidos recebidos.");
                 }
-
-                setAllTasksByWeek((prev) => ({
-                    ...prev,
-                    [weekKey]: fetchedTasks,
-                }));
-                categorizeAndSetTasks(fetchedTasks);
             } catch (err) {
                 console.error("Failed to fetch tasks:", err);
                 setError(
-                    err instanceof Error ? err.message : "Algo deu errado"
+                    err instanceof Error
+                        ? err.message
+                        : "Algo deu errado ao buscar tarefas"
                 );
-                setTasksWithTime([]);
-                setTasksWithoutTime([]);
             } finally {
+                setAllTasksByWeek((prev) => ({
+                    ...prev,
+                    [weekKey]: newWeeklyTasks,
+                }));
+
+                const selectedDateStringForComparison =
+                    formatDateToCompare(selectedDate);
+                const dailyTasks = newWeeklyTasks.filter((task) => {
+                    if (!task.date) return false;
+                    return task.date === selectedDateStringForComparison;
+                });
+                setDisplayedTasks(dailyTasks);
                 setIsLoading(false);
             }
         };
 
-        loadTasks();
-    }, [selectedDate, userTaskService, allTasksByWeek]);
+        fetchAndFilterTasks();
+    }, [selectedDate, userTaskService, forceRefreshKey]);
 
-    const categorizeAndSetTasks = (tasks: UserTask[]) => {
-        if (tasks && tasks.length === 0) {
-            setTasksWithTime([]);
-            setTasksWithoutTime([]);
-            return;
-        }
-
-        const withTime = tasks.filter(
-            (task) => task.date && task.date.trim() !== ""
-        );
-        const withoutTime = tasks.filter(
-            (task) => !task.date || task.date.trim() === ""
-        );
-        setTasksWithTime(withTime);
-        setTasksWithoutTime(withoutTime);
-    };
-
-    const handleSunflowerPress = () => {
+    const handleAddButtonPress = () => {
         setShowAddTaskModal(true);
     };
 
@@ -124,27 +133,35 @@ export default function HomeScreen() {
             delete updatedCache[weekKey];
             return updatedCache;
         });
-    }, [selectedDate]);
+
+        setForceRefreshKey((prevKey) => prevKey + 1);
+        console.log(
+            `Refresh triggered for week ${weekKey}. New refresh key: ${
+                forceRefreshKey + 1
+            }`
+        );
+    }, [selectedDate, forceRefreshKey]);
 
     return (
         <PageContainer>
             <Header onDateSelected={handleDateSelectedFromHeader} />
+
             {isLoading && (
                 <View
                     style={[
                         styles.statusContainer,
-                        { marginTop: styles.headerPlaceholder.height + 130 },
+                        { marginTop: styles.headerPlaceholder.height + 10 },
                     ]}
                 >
                     <ActivityIndicator size="large" color="#4A90E2" />
                     <Text style={styles.statusText}>Carregando tarefas...</Text>
                 </View>
             )}
-            {error && (
+            {error && !isLoading && (
                 <View
                     style={[
                         styles.statusContainer,
-                        { marginTop: styles.headerPlaceholder.height + 130 },
+                        { marginTop: styles.headerPlaceholder.height + 10 },
                     ]}
                 >
                     <Text style={styles.errorText}>Erro: {error}</Text>
@@ -163,25 +180,23 @@ export default function HomeScreen() {
                 contentContainerStyle={styles.scrollViewContentContainer}
                 keyboardShouldPersistTaps="handled"
             >
-                <View style={{ opacity: isLoading || error ? 0.3 : 1 }}>
-                    <Tasks title="Com horário" tasks={tasksWithTime} />
-                    <Tasks
-                        title="Em algum momento do dia"
-                        tasks={tasksWithoutTime}
-                    />
-                    {!isLoading &&
-                        !error &&
-                        tasksWithTime.length === 0 &&
-                        tasksWithoutTime.length === 0 && (
+                {!isLoading && !error && (
+                    <View>
+                        <Tasks
+                            title={`Tarefas para esse dia`}
+                            tasks={displayedTasks}
+                        />
+                        {displayedTasks.length === 0 && (
                             <Text style={styles.noTasksText}>
-                                Nenhuma tarefa para esta semana.
+                                Nenhuma tarefa para este dia.
                             </Text>
                         )}
-                </View>
+                    </View>
+                )}
             </ScrollView>
 
             <View style={styles.floatingButtonContainer}>
-                <SunflowerButton onPress={handleSunflowerPress} />
+                <AddButton onPress={handleAddButtonPress} />
             </View>
 
             <AddTaskModal
@@ -197,7 +212,9 @@ const styles = StyleSheet.create({
     headerPlaceholder: {
         height: 130,
     },
-    scrollView: {},
+    scrollView: {
+        paddingBottom: 260,
+    },
     scrollViewContentContainer: {
         paddingBottom: 108,
     },
@@ -211,11 +228,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         paddingVertical: 20,
-        position: "absolute",
-        left: 0,
-        right: 0,
-        top: 0,
-        zIndex: 5,
     },
     statusText: {
         marginTop: 10,
@@ -227,6 +239,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginVertical: 10,
         fontSize: 16,
+        paddingHorizontal: 20,
     },
     noTasksText: {
         textAlign: "center",

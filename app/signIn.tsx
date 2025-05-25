@@ -13,6 +13,7 @@ import { useLoginState } from "@/hooks";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { UserService } from "@/api/userService";
+import { Colors } from "@/constants/Colors";
 
 export default function SignInPage() {
     const userService = new UserService();
@@ -115,7 +116,7 @@ export default function SignInPage() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#7FB87F",
+        backgroundColor: Colors.primary,
         paddingTop: 100,
     },
     formContainer: {
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     button: {
-        backgroundColor: "#7FB87F",
+        backgroundColor: Colors.primary,
         paddingVertical: 14,
         borderRadius: 14,
         alignItems: "center",
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
         color: "#555",
     },
     loginLink: {
-        color: "#4CAF50",
+        color: Colors.primary,
         fontWeight: "600",
     },
 });

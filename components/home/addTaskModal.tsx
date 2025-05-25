@@ -11,11 +11,14 @@ import {
     ScrollView,
     Keyboard,
     KeyboardEvent,
+    Platform,
+    useWindowDimensions,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { Text } from "../shared";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Colors } from "@/constants/Colors";
 
 interface AddTaskModalProps {
     visible: boolean;
@@ -28,49 +31,56 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     onClose,
     onTaskAdded,
 }) => {
+    const { height: screenHeight } = useWindowDimensions();
+
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-    const translateY = useRef(new Animated.Value(0)).current;
-    const defaultModalHeight = Dimensions.get("window").height * 0.8;
+    const translateY = useRef(new Animated.Value(screenHeight)).current;
+    const defaultModalHeightPercentage = 0.9;
+
+    const defaultModalHeight = screenHeight * defaultModalHeightPercentage;
 
     const modalHeight = isKeyboardVisible
-        ? defaultModalHeight - keyboardHeight * 0.6
+        ? defaultModalHeight
         : defaultModalHeight;
 
+    const modalTopPosition = screenHeight - modalHeight;
+    const keyboardAwareTranslateY = isKeyboardVisible
+        ? Platform.OS === "ios"
+            ? modalTopPosition - keyboardHeight * 0.5
+            : modalTopPosition
+        : modalTopPosition;
+
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [time, setTime] = useState(new Date());
     const [showTimePicker, setShowTimePicker] = useState(false);
-
-    const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
-    const [isGoalDropdownOpen, setIsGoalDropdownOpen] = useState(false);
-
-    const goals = [
-        "Concluir curso de inglês",
-        "Melhorar condicionamento físico",
-        "Desenvolver app de produtividade",
-    ];
+    const [hasSetTime, setHasSetTime] = useState(false);
 
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onPanResponderMove: (_, gestureState) => {
-                if (gestureState.dy > 0) {
-                    translateY.setValue(gestureState.dy);
-                }
+                const newTranslateY = Math.max(0, gestureState.dy);
+                translateY.setValue(newTranslateY);
             },
             onPanResponderRelease: (_, gestureState) => {
-                if (gestureState.dy > 150) {
+                if (gestureState.dy > 100) {
                     Animated.timing(translateY, {
-                        toValue: modalHeight,
-                        duration: 200,
+                        toValue: screenHeight,
+                        duration: 300,
                         useNativeDriver: true,
-                    }).start(onClose);
+                    }).start(() => {
+                        onClose();
+                    });
                 } else {
                     Animated.spring(translateY, {
                         toValue: 0,
                         friction: 8,
+                        tension: 40,
                         useNativeDriver: true,
                     }).start();
                 }
@@ -83,33 +93,47 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             Animated.spring(translateY, {
                 toValue: 0,
                 friction: 8,
+                tension: 40,
+                useNativeDriver: true,
+            }).start();
+        } else {
+            Animated.timing(translateY, {
+                toValue: screenHeight,
+                duration: 300,
                 useNativeDriver: true,
             }).start();
         }
-    }, [visible]);
+    }, [visible, screenHeight, translateY]);
 
-    const onDateChange = (event: any, selectedDate: Date | undefined) => {
-        const currentDate = selectedDate || date;
-        setShowDatePicker(false);
-        setDate(currentDate);
+    const onDateChange = (_event: any, selectedDateParam: Date | undefined) => {
+        if (Platform.OS === "android") {
+            setShowDatePicker(false);
+        }
+        if (selectedDateParam) {
+            setDate(selectedDateParam);
+        }
     };
 
-    const onTimeChange = (event: any, selectedTime: Date | undefined) => {
-        const currentTime = selectedTime || time;
-        setShowTimePicker(false);
-        setTime(currentTime);
+    const onTimeChange = (_event: any, selectedTimeParam: Date | undefined) => {
+        if (Platform.OS === "android") {
+            setShowTimePicker(false);
+        }
+        if (selectedTimeParam) {
+            setTime(selectedTimeParam);
+            setHasSetTime(true);
+        }
     };
 
     useEffect(() => {
-        const keyboardDidShowListener = Keyboard.addListener(
-            "keyboardDidShow",
+        const keyboardWillShowListener = Keyboard.addListener(
+            Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
             (event: KeyboardEvent) => {
                 setKeyboardHeight(event.endCoordinates.height);
                 setIsKeyboardVisible(true);
             }
         );
-        const keyboardDidHideListener = Keyboard.addListener(
-            "keyboardDidHide",
+        const keyboardWillHideListener = Keyboard.addListener(
+            Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
             () => {
                 setKeyboardHeight(0);
                 setIsKeyboardVisible(false);
@@ -117,257 +141,249 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
         );
 
         return () => {
-            keyboardDidHideListener.remove();
-            keyboardDidShowListener.remove();
+            keyboardWillHideListener.remove();
+            keyboardWillShowListener.remove();
         };
     }, []);
+
+    const handleSaveTask = () => {
+        console.log("Salvar tarefa:", {
+            title,
+            description,
+            date,
+            time: hasSetTime ? time : null,
+        });
+        onTaskAdded();
+        onClose();
+        setTitle("");
+        setDescription("");
+        setDate(new Date());
+        setTime(new Date());
+        setHasSetTime(false);
+    };
+
+    if (!visible) {
+        return null;
+    }
 
     return (
         <Modal
             transparent
             visible={visible}
-            animationType="fade"
+            animationType="none"
             onRequestClose={onClose}
             statusBarTranslucent={true}
         >
             <BlurView
-                intensity={60}
+                intensity={Platform.OS === "ios" ? 30 : 80}
                 tint="light"
-                style={StyleSheet.absoluteFill}
+                style={StyleSheet.absoluteFillObject}
             >
                 <TouchableOpacity
                     style={styles.overlay}
                     activeOpacity={1}
                     onPress={onClose}
+                />
+                <Animated.View
+                    style={[
+                        styles.modalPositionWrapper,
+                        {
+                            height: modalHeight,
+                            transform: [
+                                {
+                                    translateY: translateY.interpolate({
+                                        inputRange: [0, screenHeight],
+                                        outputRange: [
+                                            keyboardAwareTranslateY,
+                                            screenHeight,
+                                        ],
+                                    }),
+                                },
+                            ],
+                        },
+                    ]}
                 >
                     <TouchableOpacity
                         activeOpacity={1}
-                        style={styles.modalWrapper}
                         onPress={(e) => e.stopPropagation()}
+                        style={styles.modalTouchableContent}
                     >
-                        <Animated.View
-                            style={[
-                                styles.modalContainer,
-                                {
-                                    transform: [{ translateY }],
-                                    height: modalHeight,
-                                },
-                            ]}
+                        <View
+                            style={styles.grabberContainer}
                             {...panResponder.panHandlers}
                         >
-                            <View style={styles.grabberContainer}>
-                                <View style={styles.grabber} />
-                            </View>
+                            <View style={styles.grabber} />
+                        </View>
 
-                            <View style={styles.modalHeader}>
-                                <TouchableOpacity
-                                    onPress={onClose}
-                                    style={styles.headerButton}
-                                >
-                                    <Text style={styles.cancelButton}>
-                                        Cancelar
-                                    </Text>
-                                </TouchableOpacity>
-
-                                <Text style={styles.modalTitle}>
-                                    Criar nova tarefa
-                                </Text>
-
-                                <TouchableOpacity
-                                    style={styles.headerButton}
-                                    onPress={onTaskAdded}
-                                >
-                                    <Text style={styles.saveButton}>
-                                        Salvar
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            <ScrollView
-                                contentContainerStyle={styles.scrollViewContent}
-                                showsVerticalScrollIndicator={false}
-                                keyboardShouldPersistTaps="handled"
-                                style={styles.scrollView}
+                        <View style={styles.modalHeader}>
+                            <TouchableOpacity
+                                onPress={onClose}
+                                style={styles.headerButton}
                             >
-                                <View style={styles.taskField}>
-                                    <View style={styles.titleField}>
-                                        <TouchableOpacity
-                                            style={styles.addButton}
-                                        >
-                                            <Text style={styles.addButtonText}>
-                                                +
-                                            </Text>
-                                        </TouchableOpacity>
+                                <Text style={styles.cancelButton}>
+                                    Cancelar
+                                </Text>
+                            </TouchableOpacity>
+                            <Text style={styles.modalTitle}>
+                                Criar nova tarefa
+                            </Text>
+                            <TouchableOpacity
+                                style={styles.headerButton}
+                                onPress={handleSaveTask}
+                            >
+                                <Text style={styles.saveButton}>Salvar</Text>
+                            </TouchableOpacity>
+                        </View>
 
-                                        <View
-                                            style={[
-                                                styles.inputContainer,
-                                                { flex: 1 },
-                                            ]}
-                                        >
-                                            <Text style={styles.inputLabel}>
-                                                Título da tarefa
-                                            </Text>
-                                            <TextInput
-                                                placeholder="Ex: Estudar para a prova"
-                                                style={styles.textInput}
-                                                placeholderTextColor="#999999"
-                                            />
-                                        </View>
+                        <ScrollView
+                            style={styles.scrollView}
+                            contentContainerStyle={styles.scrollViewContent}
+                            showsVerticalScrollIndicator={false}
+                            keyboardShouldPersistTaps="handled"
+                        >
+                            <View style={styles.taskField}>
+                                <View style={styles.titleField}>
+                                    <View
+                                        style={[
+                                            styles.inputContainer,
+                                            { flex: 1 },
+                                        ]}
+                                    >
+                                        <Text style={styles.inputLabel}>
+                                            Título da tarefa
+                                        </Text>
+                                        <TextInput
+                                            placeholder="Ex: Estudar para a prova"
+                                            style={styles.textInput}
+                                            placeholderTextColor="#999999"
+                                            value={title}
+                                            onChangeText={setTitle}
+                                        />
                                     </View>
                                 </View>
+                            </View>
 
-                                <View
+                            <View
+                                style={[
+                                    styles.taskField,
+                                    styles.inputContainer,
+                                ]}
+                            >
+                                <Text style={styles.inputLabel}>Descrição</Text>
+                                <TextInput
+                                    placeholder="Ex: Prova de inglês na sexta-feira"
                                     style={[
-                                        styles.taskField,
-                                        styles.inputContainer,
+                                        styles.textInput,
+                                        styles.multilineInput,
                                     ]}
+                                    placeholderTextColor="#999999"
+                                    multiline
+                                    numberOfLines={3}
+                                    value={description}
+                                    onChangeText={setDescription}
+                                />
+                            </View>
+
+                            <View
+                                style={[
+                                    styles.taskField,
+                                    styles.inputContainer,
+                                ]}
+                            >
+                                <Text style={styles.inputLabel}>Data</Text>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setShowDatePicker((prev) => !prev);
+                                    }}
+                                    style={styles.datePickerButton}
                                 >
-                                    <Text style={styles.inputLabel}>
-                                        Descrição
+                                    <Text style={styles.datePickerText}>
+                                        {date.toLocaleDateString("pt-BR")}
                                     </Text>
-                                    <TextInput
-                                        placeholder="Ex: Prova de inglês na sexta-feira"
-                                        style={styles.textInput}
-                                        placeholderTextColor="#999999"
+                                    <Ionicons
+                                        name="calendar-outline"
+                                        size={24}
+                                        color={Colors.primary}
                                     />
-                                </View>
-
-                                <View
-                                    style={[
-                                        styles.taskField,
-                                        styles.inputContainer,
-                                    ]}
-                                >
-                                    <Text style={styles.inputLabel}>Data</Text>
-                                    <TouchableOpacity
-                                        onPress={() => setShowDatePicker(true)}
-                                        style={styles.datePickerButton}
-                                    >
-                                        <Text style={styles.datePickerText}>
-                                            {date.toLocaleDateString()}
-                                        </Text>
-                                        <Ionicons
-                                            name="calendar-outline"
-                                            size={24}
-                                            color="#999999"
-                                            style={styles.calendarIcon}
-                                        />
-                                    </TouchableOpacity>
-                                    {showDatePicker && (
-                                        <DateTimePicker
-                                            value={date}
-                                            mode="date"
-                                            display="default"
-                                            onChange={onDateChange}
-                                            style={styles.dateTimePicker}
-                                        />
-                                    )}
-                                </View>
-
-                                <View
-                                    style={[
-                                        styles.taskField,
-                                        styles.inputContainer,
-                                    ]}
-                                >
-                                    <Text style={styles.inputLabel}>
-                                        Horário
-                                    </Text>
-                                    <TouchableOpacity
-                                        onPress={() => setShowTimePicker(true)}
-                                        style={styles.datePickerButton}
-                                    >
-                                        <Text style={styles.datePickerText}>
-                                            {time.toLocaleTimeString([], {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                        </Text>
-                                        <Ionicons
-                                            name="time-outline"
-                                            size={24}
-                                            color="#999999"
-                                            style={styles.calendarIcon}
-                                        />
-                                    </TouchableOpacity>
-                                    {showTimePicker && (
-                                        <DateTimePicker
-                                            value={time}
-                                            mode="time"
-                                            is24Hour={true}
-                                            display="default"
-                                            onChange={onTimeChange}
-                                            style={styles.dateTimePicker}
-                                        />
-                                    )}
-                                </View>
-
-                                <View
-                                    style={[
-                                        styles.taskField,
-                                        styles.inputContainer,
-                                    ]}
-                                >
-                                    <Text style={styles.inputLabel}>
-                                        Incluir em meta{" "}
-                                        <Text style={styles.optionalField}>
-                                            (opcional)
-                                        </Text>
-                                    </Text>
-                                    <TouchableOpacity
-                                        onPress={() =>
-                                            setIsGoalDropdownOpen(
-                                                !isGoalDropdownOpen
-                                            )
+                                </TouchableOpacity>
+                                {showDatePicker && (
+                                    <DateTimePicker
+                                        value={date}
+                                        mode="date"
+                                        display={
+                                            Platform.OS === "ios"
+                                                ? "spinner"
+                                                : "default"
                                         }
-                                        style={styles.goalSelectorButton}
-                                    >
-                                        <Text style={styles.goalSelectorText}>
-                                            {selectedGoal
-                                                ? selectedGoal
-                                                : "Selecionar uma meta"}
-                                        </Text>
-                                        <Ionicons
-                                            name={
-                                                isGoalDropdownOpen
-                                                    ? "chevron-up"
-                                                    : "chevron-down"
-                                            }
-                                            size={24}
-                                            color="#999999"
-                                            style={styles.chevronIcon}
-                                        />
-                                    </TouchableOpacity>
-                                    {isGoalDropdownOpen && (
-                                        <View style={styles.goalDropdown}>
-                                            {goals.map((goal, index) => (
-                                                <TouchableOpacity
-                                                    key={index}
-                                                    onPress={() => {
-                                                        setSelectedGoal(goal);
-                                                        setIsGoalDropdownOpen(
-                                                            false
-                                                        );
-                                                    }}
-                                                    style={styles.goalOption}
-                                                >
-                                                    <Text
-                                                        style={
-                                                            styles.goalOptionText
-                                                        }
-                                                    >
-                                                        {goal}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
-                                        </View>
-                                    )}
-                                </View>
-                            </ScrollView>
-                        </Animated.View>
+                                        onChange={onDateChange}
+                                        textColor={
+                                            Platform.OS === "ios"
+                                                ? "#333"
+                                                : undefined
+                                        }
+                                    />
+                                )}
+                            </View>
+
+                            <View
+                                style={[
+                                    styles.taskField,
+                                    styles.inputContainer,
+                                ]}
+                            >
+                                <Text style={styles.inputLabel}>
+                                    Horário{" "}
+                                    <Text style={styles.optionalField}>
+                                        (opcional)
+                                    </Text>
+                                </Text>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setShowTimePicker((prev) => !prev);
+                                    }}
+                                    style={styles.datePickerButton}
+                                >
+                                    <Text style={styles.datePickerText}>
+                                        {hasSetTime
+                                            ? time.toLocaleTimeString("pt-BR", {
+                                                  hour: "2-digit",
+                                                  minute: "2-digit",
+                                              })
+                                            : "Definir horário"}
+                                    </Text>
+                                    <Ionicons
+                                        name="time-outline"
+                                        size={24}
+                                        color={Colors.primary}
+                                    />
+                                </TouchableOpacity>
+                                {showTimePicker && (
+                                    <DateTimePicker
+                                        value={time}
+                                        mode="time"
+                                        is24Hour={true}
+                                        textColor={
+                                            Platform.OS === "ios"
+                                                ? "#333"
+                                                : undefined
+                                        }
+                                        display={
+                                            Platform.OS === "ios"
+                                                ? "spinner"
+                                                : "default"
+                                        }
+                                        onChange={onTimeChange}
+                                    />
+                                )}
+                            </View>
+                            {Platform.OS === "android" && isKeyboardVisible && (
+                                <View
+                                    style={{ height: keyboardHeight * 0.7 }}
+                                />
+                            )}
+                        </ScrollView>
                     </TouchableOpacity>
-                </TouchableOpacity>
+                </Animated.View>
             </BlurView>
         </Modal>
     );
@@ -376,193 +392,132 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.30)",
-        justifyContent: "flex-end",
     },
-    modalContainer: {
-        alignItems: "center",
+    modalPositionWrapper: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
         backgroundColor: "#F4F4F5",
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        paddingBottom: 20,
+        overflow: "hidden",
+    },
+    modalTouchableContent: {
+        flex: 1,
+        alignItems: "center",
     },
     grabberContainer: {
         width: "100%",
-        height: 30,
-        justifyContent: "center",
+        paddingVertical: 10,
         alignItems: "center",
     },
     grabber: {
-        width: 40,
+        width: 48,
         height: 5,
         borderRadius: 2.5,
-        backgroundColor: "#DDDDDD",
+        backgroundColor: "#C0C0C0",
     },
     modalHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingHorizontal: 20,
-        paddingBottom: 15,
+        width: "100%",
+        paddingHorizontal: 16,
+        paddingVertical: 10,
         borderBottomWidth: 1,
-        borderBottomColor: "#F0F0F0",
+        borderBottomColor: "#E0E0E0",
     },
     modalTitle: {
-        fontSize: 20,
-        lineHeight: 32,
-        fontWeight: "700",
+        fontSize: 18,
+        fontWeight: "600",
         textAlign: "center",
+        color: "#333333",
     },
     headerButton: {
-        padding: 16,
+        paddingHorizontal: 8,
+        paddingVertical: 8,
     },
     cancelButton: {
-        fontSize: 14,
-        lineHeight: 24,
-        color: "#999999",
+        fontSize: 16,
+        color: "#666666",
     },
     saveButton: {
-        fontSize: 14,
-        lineHeight: 24,
-        fontWeight: "700",
-        color: "#00CC66",
+        fontSize: 16,
+        fontWeight: "600",
+        color: Colors.primary,
     },
-    closeButton: {
-        padding: 5,
-    },
-    modalContent: {
+    scrollView: {
+        width: "100%",
         flex: 1,
-        padding: 20,
     },
-    taskField: {
-        width: "95%",
-        borderRadius: 8,
-        padding: 12,
-        backgroundColor: "#FFFFFF",
-        marginBottom: 12,
-    },
-    addButton: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        backgroundColor: "#F4F4F5",
-        justifyContent: "center",
+    scrollViewContent: {
+        paddingHorizontal: 16,
+        paddingTop: 10,
+        paddingBottom: Platform.OS === "ios" ? 150 : 120,
         alignItems: "center",
     },
-    addButtonText: {
-        color: "#FFFFFF",
-        fontSize: 32,
-        fontWeight: "bold",
+    taskField: {
+        width: "100%",
+        borderRadius: 10,
+        padding: 12,
+        backgroundColor: "#FFFFFF",
+        marginBottom: 16,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
     },
     titleField: {
         flexDirection: "row",
-        gap: 12,
+        alignItems: "center",
     },
     inputContainer: {
-        justifyContent: "center",
+        flex: 1,
     },
     inputLabel: {
-        fontSize: 16,
-        lineHeight: 20,
-        color: "#333333",
-        marginBottom: 4,
+        fontSize: 14,
+        color: "#555555",
+        marginBottom: 6,
+        fontWeight: "500",
     },
     textInput: {
         borderWidth: 1,
-        borderColor: "#999999",
+        borderColor: "#D0D0D0",
         borderRadius: 8,
-        padding: 10,
-        height: 44,
+        paddingHorizontal: 12,
+        paddingVertical: Platform.OS === "ios" ? 12 : 8,
+        height: 48,
         fontSize: 16,
-        lineHeight: 20,
-        color: "#999999",
+        color: "#333333",
+        backgroundColor: "#FCFCFC",
+    },
+    multilineInput: {
+        height: 80,
+        textAlignVertical: "top",
+        paddingTop: 12,
     },
     datePickerButton: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         borderWidth: 1,
-        borderColor: "#999999",
+        borderColor: "#D0D0D0",
         borderRadius: 8,
-        padding: 10,
-        height: 44,
-        backgroundColor: "#FFFFFF",
+        paddingHorizontal: 12,
+        height: 48,
+        backgroundColor: "#FCFCFC",
     },
     datePickerText: {
         fontSize: 16,
-        lineHeight: 20,
-        color: "#333333",
-    },
-    calendarIcon: {
-        marginLeft: 8,
-    },
-    dateTimePicker: {
-        width: "100%",
-        backgroundColor: "#FFFFFF",
-        borderRadius: 8,
-        overflow: "hidden",
     },
     optionalField: {
-        fontSize: 14,
-        lineHeight: 20,
-        color: "#999999",
-    },
-    goalSelectorButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderWidth: 1,
-        borderColor: "#999999",
-        borderRadius: 8,
-        padding: 10,
-        height: 44,
-        backgroundColor: "#FFFFFF",
-    },
-    goalSelectorText: {
-        fontSize: 14,
-        color: "#333333",
-    },
-    chevronIcon: {
-        marginLeft: 8,
-    },
-    goalDropdown: {
-        position: "absolute",
-        top: 54,
-        left: 0,
-        right: 0,
-        backgroundColor: "#FFFFFF",
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: "#999999",
-        zIndex: 1000,
-        maxHeight: 150,
-        overflow: "hidden",
-    },
-    goalOption: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#F0F0F0",
-    },
-    goalOptionText: {
-        fontSize: 16,
-        lineHeight: 20,
-        color: "#333333",
-    },
-    scrollViewContent: {
-        paddingBottom: 116,
-        alignItems: "center",
-        width: "100%",
-    },
-    scrollView: {
-        width: "100%",
-    },
-    keyboardAvoid: {
-        flex: 1,
-        width: "100%",
-    },
-    modalWrapper: {
-        flex: 1,
-        justifyContent: "flex-end",
-        width: "100%",
+        fontSize: 12,
+        color: "#777777",
+        fontWeight: "400",
     },
 });
