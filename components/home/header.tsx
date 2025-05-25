@@ -282,7 +282,7 @@ export const Header = ({ onDateSelected }: HeaderProps) => {
 
 const styles = StyleSheet.create({
     headerContainer: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: Colors.card,
         alignItems: "center",
         width: Dimensions.get("window").width,
         position: "absolute",

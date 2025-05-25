@@ -18,7 +18,7 @@ export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: Colors.light.text,
+                tabBarActiveTintColor: Colors.secondaryText,
                 headerShown: false,
                 tabBarButton: HapticTab,
                 tabBarLabelStyle: {
@@ -28,7 +28,7 @@ export default function TabLayout() {
                 tabBarStyle: {
                     paddingTop: 12,
                     height: 80,
-                    backgroundColor: "#FFFFFF",
+                    backgroundColor: Colors.card,
                 },
             }}
         >

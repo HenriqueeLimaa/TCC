@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     taskItem: {
         flexDirection: "row",
         justifyContent: "space-between",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: Colors.card,
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 12,

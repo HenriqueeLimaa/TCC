@@ -2,6 +2,7 @@ export const API_URL = "http://localhost:3000";
 
 export enum UserRoutes {
     REGISTER = "/users",
+    ME = "/users/me",
     LOGIN = "/auth/login",
 }
 

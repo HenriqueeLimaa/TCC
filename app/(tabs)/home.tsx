@@ -10,15 +10,8 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { UserTask, UserTaskService } from "@/api/userTasksService";
-import { getWeekIdentifier } from "@/utils/dateUtils";
+import { formatDateToCompare, getWeekIdentifier } from "@/utils/dateUtils";
 import { Colors } from "@/constants/Colors";
-
-const formatDateToCompare = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-};
 
 const hasSpecificTime = (dateString: string | undefined): boolean => {
     if (!dateString || typeof dateString !== "string") {

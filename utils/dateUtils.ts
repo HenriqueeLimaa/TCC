@@ -14,3 +14,20 @@ export const getWeekIdentifier = (date: Date): string => {
         );
     return `${year}-W${String(weekNumber).padStart(2, "0")}`;
 };
+
+export const formatDateToCompare = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
+
+export const formatIsoDate = (isoDateString: string) => {
+    const dateObj = new Date(isoDateString);
+    const year = dateObj.getUTCFullYear();
+    const month = dateObj.getUTCMonth() + 1;
+    const day = dateObj.getUTCDate();
+    const formattedMonth = String(month).padStart(2, "0");
+    const formattedDay = String(day).padStart(2, "0");
+    return `${formattedMonth}/${formattedDay}/${year}`;
+};
