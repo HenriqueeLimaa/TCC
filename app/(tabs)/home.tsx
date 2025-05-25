@@ -24,17 +24,24 @@ const hasSpecificTime = (dateString: string | undefined): boolean => {
     if (!dateString || typeof dateString !== "string") {
         return false;
     }
-
     try {
         const dateObj = new Date(dateString);
         if (isNaN(dateObj.getTime())) {
             return false;
         }
-
         return dateObj.getUTCHours() !== 0 && dateObj.getUTCMinutes() !== 0;
     } catch (e) {
         return false;
     }
+};
+
+const getStartDateOfWeek = (date: Date): Date => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    const dayOfWeek = d.getDay();
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    d.setDate(d.getDate() + diffToMonday);
+    return d;
 };
 
 export default function HomeScreen() {
@@ -45,7 +52,11 @@ export default function HomeScreen() {
     const [tasksWithTime, setTasksWithTime] = useState<UserTask[]>([]);
     const [tasksAnyTime, setTasksAnyTime] = useState<UserTask[]>([]);
 
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return today;
+    });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [forceRefreshKey, setForceRefreshKey] = useState(0);
@@ -54,8 +65,17 @@ export default function HomeScreen() {
 
     const handleDateSelectedFromHeader = useCallback(
         (newDate: Date) => {
-            if (selectedDate.toDateString() !== newDate.toDateString()) {
-                setSelectedDate(newDate);
+            const currentSelectedDateNormalized = new Date(selectedDate);
+            currentSelectedDateNormalized.setHours(0, 0, 0, 0);
+
+            const newDateNormalized = new Date(newDate);
+            newDateNormalized.setHours(0, 0, 0, 0);
+
+            if (
+                currentSelectedDateNormalized.getTime() !==
+                newDateNormalized.getTime()
+            ) {
+                setSelectedDate(newDateNormalized);
             }
         },
         [selectedDate]
@@ -82,11 +102,8 @@ export default function HomeScreen() {
         };
 
         if (cachedTasksForWeek && Array.isArray(cachedTasksForWeek)) {
-            console.log(
-                `Cache hit for week ${weekKey}. Filtering for date: ${selectedDate.toDateString()}`
-            );
-            if (isLoading) setIsLoading(false);
-            if (error) setError(null);
+            setIsLoading(false);
+            setError(null);
 
             const dailyTasks = cachedTasksForWeek.filter((task) => {
                 if (!task.date || typeof task.date !== "string") {
@@ -100,17 +117,15 @@ export default function HomeScreen() {
         }
 
         const fetchAndFilterTasks = async () => {
-            console.log(
-                `Cache miss for week ${weekKey} (or refresh). Fetching for date: ${selectedDate.toDateString()}`
-            );
             setIsLoading(true);
             setError(null);
             let newWeeklyTasks: UserTask[] = [];
 
             try {
-                const day = selectedDate.getDate();
-                const month = selectedDate.getMonth() + 1;
-                const year = selectedDate.getFullYear();
+                const weekStartDate = getStartDateOfWeek(selectedDate);
+                const day = weekStartDate.getDate();
+                const month = weekStartDate.getMonth() + 1;
+                const year = weekStartDate.getFullYear();
                 const formattedMonth = String(month).padStart(2, "0");
                 const formattedDay = String(day).padStart(2, "0");
                 const formattedDateForAPI = `${formattedMonth}/${formattedDay}/${year}`;
@@ -120,23 +135,19 @@ export default function HomeScreen() {
                 });
                 const fetchedData = requestData.data;
 
-                if (fetchedData) {
+                if (Array.isArray(fetchedData)) {
                     newWeeklyTasks = fetchedData;
                 } else {
-                    console.error(
-                        "Fetched tasks data is not an array or is undefined:",
-                        fetchedData
-                    );
                     setError("Dados de tarefas inválidos recebidos.");
                     newWeeklyTasks = [];
                 }
             } catch (err) {
-                console.error("Failed to fetch tasks:", err);
                 setError(
                     err instanceof Error
                         ? err.message
                         : "Algo deu errado ao buscar tarefas"
                 );
+                newWeeklyTasks = [];
             } finally {
                 setAllTasksByWeek((prev) => ({
                     ...prev,
@@ -156,14 +167,7 @@ export default function HomeScreen() {
         };
 
         fetchAndFilterTasks();
-    }, [
-        selectedDate,
-        userTaskService,
-        forceRefreshKey,
-        allTasksByWeek,
-        isLoading,
-        error,
-    ]);
+    }, [selectedDate, userTaskService, forceRefreshKey, allTasksByWeek]);
 
     const handleAddButtonPress = () => {
         setShowAddTaskModal(true);
@@ -248,7 +252,6 @@ export default function HomeScreen() {
                                 {tasksWithTime.length === 0 &&
                                     (tasksAnyTime.length > 0 ||
                                         (tasksAnyTime.length === 0 &&
-                                            tasksWithTime.length === 0 &&
                                             !isLoading)) && (
                                         <Text
                                             style={styles.noTasksInCategoryText}
@@ -268,8 +271,7 @@ export default function HomeScreen() {
                                 />
                                 {tasksAnyTime.length === 0 &&
                                     (tasksWithTime.length > 0 ||
-                                        (tasksAnyTime.length === 0 &&
-                                            tasksWithTime.length === 0 &&
+                                        (tasksWithTime.length === 0 &&
                                             !isLoading)) && (
                                         <Text
                                             style={styles.noTasksInCategoryText}
@@ -314,6 +316,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         paddingVertical: 20,
+        flex: 1,
     },
     statusText: {
         marginTop: 10,
