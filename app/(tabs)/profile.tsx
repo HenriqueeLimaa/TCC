@@ -143,6 +143,10 @@ export default function Profile() {
         }
     };
 
+    const navigateToTrophy = () => {
+        router.push("../userAchievements");
+    };
+
     return (
         <PageContainer
             customStyle={{
@@ -158,7 +162,7 @@ export default function Profile() {
                     <View style={styles.profileHeaderCard}>
                         <Ionicons
                             name="person-circle-outline"
-                            size={40}
+                            size={32}
                             color={Colors.primary}
                             style={styles.profileIcon}
                         />
@@ -166,6 +170,15 @@ export default function Profile() {
                             <Text style={styles.profileTitle}>Seu perfil</Text>
                             <Text style={styles.profileEmail}>{email}</Text>
                         </View>
+
+                        <TouchableOpacity onPress={navigateToTrophy}>
+                            <Ionicons
+                                name="trophy-outline"
+                                size={28}
+                                style={styles.profileIcon}
+                                color={Colors.secondaryText}
+                            />
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.formContainer}>

@@ -30,7 +30,6 @@ export default function RootLayout() {
     );
     const [isNavigationReady, setIsNavigationReady] = useState(false);
     const router = useRouter();
-    const segments = useSegments();
     const colorScheme = useColorScheme();
 
     const [fontsLoaded] = useFonts({

@@ -11,3 +11,7 @@ export enum TaskRoutes {
     CREATE = "/userTasks",
     EDIT = "/userTasks/update",
 }
+
+export enum AchievementRoutes {
+    FETCH_GROUPED = "/user-achievements/grouped",
+}
