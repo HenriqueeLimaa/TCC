@@ -105,14 +105,7 @@ export default function UserAchievements() {
                             size={28}
                             color="#CCCCCC"
                         />
-                        <Text
-                            style={{
-                                color: Colors.secondaryText,
-                                fontWeight: "bold",
-                            }}
-                        >
-                            Perfil
-                        </Text>
+                        <Text style={styles.backButtonText}>Perfil</Text>
                     </View>
                 </TouchableOpacity>
                 {!hasAnyAchievement && !isLoading && !error && (
@@ -138,7 +131,7 @@ export default function UserAchievements() {
 
                 {blockedAchievements.length > 0 && (
                     <AchievementGroup
-                        title="Pendentes"
+                        title="Conquistas pendentes"
                         achievements={blockedAchievements}
                         isUnlockedSection={false}
                     />
@@ -157,7 +150,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        marginBottom: 16,
+        marginBottom: 24,
+    },
+    backButtonText: {
+        color: Colors.secondaryText,
+        fontWeight: "bold",
+        fontSize: 14,
     },
     centeredMessageContainer: {
         flex: 1,
