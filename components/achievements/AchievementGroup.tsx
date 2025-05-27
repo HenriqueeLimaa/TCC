@@ -57,7 +57,7 @@ export const AchievementGroup: React.FC<AchievementSectionProps> = ({
             >
                 <Text style={sectionStyles.title}>{title}</Text>
                 <Animated.View style={{ transform: [{ rotate: spin }] }}>
-                    <Ionicons name="chevron-down" size={24} color="#999999" />
+                    <Ionicons name="chevron-up" size={24} color="#999999" />
                 </Animated.View>
             </TouchableOpacity>
             {isExpanded && (

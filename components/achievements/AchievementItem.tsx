@@ -16,7 +16,12 @@ export const AchievementItem: React.FC<AchievementItemProps> = ({
     isUnlocked,
 }) => {
     return (
-        <View style={itemStyles.container}>
+        <View
+            style={[
+                itemStyles.container,
+                { backgroundColor: isUnlocked ? Colors.card : "#CCCCCC" },
+            ]}
+        >
             <Text style={itemStyles.name}>{name}</Text>
             {isUnlocked && (
                 <View style={itemStyles.detailsContainer}>
@@ -34,10 +39,9 @@ export const AchievementItem: React.FC<AchievementItemProps> = ({
 
 const itemStyles = StyleSheet.create({
     container: {
-        backgroundColor: Colors.card,
-        borderRadius: 10,
-        paddingVertical: 15,
-        paddingHorizontal: 20,
+        borderRadius: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
@@ -49,7 +53,7 @@ const itemStyles = StyleSheet.create({
         elevation: 2,
     },
     name: {
-        fontSize: 16,
+        fontSize: 14,
         color: Colors.primaryText,
         flex: 1,
         marginRight: 10,

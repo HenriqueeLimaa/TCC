@@ -65,7 +65,7 @@ export default function UserAchievements() {
 
     if (isLoading) {
         return (
-            <PageContainer customStyle={styles.centeredMessageContainer}>
+            <PageContainer customStyle={{ backgroundColor: Colors.background }}>
                 <ActivityIndicator size="large" color={Colors.primary} />
                 <Text style={styles.loadingText}>Carregando conquistas...</Text>
             </PageContainer>
@@ -74,7 +74,7 @@ export default function UserAchievements() {
 
     if (error) {
         return (
-            <PageContainer customStyle={styles.centeredMessageContainer}>
+            <PageContainer customStyle={{ backgroundColor: Colors.background }}>
                 <Ionicons
                     name="warning-outline"
                     size={40}
@@ -102,10 +102,15 @@ export default function UserAchievements() {
                     <View style={styles.topNavigationContainer}>
                         <Ionicons
                             name="chevron-back-outline"
-                            size={32}
-                            color={Colors.secondaryText}
+                            size={28}
+                            color="#CCCCCC"
                         />
-                        <Text style={{ color: Colors.secondaryText }}>
+                        <Text
+                            style={{
+                                color: Colors.secondaryText,
+                                fontWeight: "bold",
+                            }}
+                        >
                             Perfil
                         </Text>
                     </View>
@@ -151,7 +156,7 @@ const styles = StyleSheet.create({
     topNavigationContainer: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 10,
+        gap: 8,
         marginBottom: 16,
     },
     centeredMessageContainer: {
