@@ -87,6 +87,8 @@ const styles = StyleSheet.create({
   petContainer: {
     height: "100%",
     width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   petImage: {
     width: 240,
@@ -101,6 +103,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 9,
     borderColor: "#514B44",
+    alignSelf: "center",
+    marginTop: 20,
   },
   barFill: {
     height: "100%",
