@@ -15,3 +15,10 @@ export enum TaskRoutes {
 export enum AchievementRoutes {
     FETCH_GROUPED = "/user-achievements/grouped",
 }
+
+export enum VirtualPetRoutes {
+    CREATE = "/pet",
+    EDIT = "/pet",
+    GET = "/pet",
+    DELETE = "/pet"
+}
