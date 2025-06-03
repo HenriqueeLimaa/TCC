@@ -5,3 +5,4 @@ export { BodyText } from "./bodyText";
 export { Text } from "./Text";
 export { HourIcon } from "./HourIcon";
 export { TabBarIcon } from "./tabBarIcon";
+export { Notification } from "./notification";
