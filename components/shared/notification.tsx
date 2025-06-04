@@ -4,13 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 import { NotificationType } from "@/types/notification";
-import { Colors } from "@/constants/Colors";
 
-export const Notification = ({
-  message,
-  type,
-  onClose,
-}: NotificationType) => {
+export const Notification = ({ message, type, onClose }: NotificationType) => {
+
   useEffect(() => {
     if (type === "success" && onClose) {
       const timer = setTimeout(() => {
@@ -21,55 +17,61 @@ export const Notification = ({
     }
   }, [type, onClose]);
 
+  const notificationIcon = type === "error" ? "warning" : "checkmark-circle";
+  const notificationTitle = type === "error" ? "Erro!" : "Sucesso!";
+
   return (
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: type === "error" ? Colors.warning : Colors.primary },
+        { backgroundColor: type === "error" ? "#D32F2F" : "#2E7D32" },
       ]}
+      edges={["left", "right"]}
     >
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Ionicons name="warning" size={24} color="white" />
+      <View style={styles.contentContainer}>
+        <Ionicons name={notificationIcon} size={24} color="white" />
         <Text style={styles.text} fontFamily="bold">
           {message}
         </Text>
+        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <Ionicons name="close" size={24} color="white" />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-        <Ionicons name="close" size={24} color="white" />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     position: "absolute",
-    paddingHorizontal: 12,
     top: 0,
     left: 0,
     right: 0,
     zIndex: 9999,
     height: 150,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingTop: 0,
+  },
+  contentContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    paddingVertical: 12,
+    paddingTop: 40,
   },
   text: {
     color: "white",
     fontSize: 16,
     textAlign: "center",
-    flexShrink: 1,
-    marginLeft: 8,
+    flex: 1,
+    marginHorizontal: 12,
   },
   closeButton: {
-    marginLeft: 8,
-    padding: 4,
+    padding: 8,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
