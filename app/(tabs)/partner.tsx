@@ -6,6 +6,10 @@ import {
   Image,
   TextInput,
   Button,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  TouchableOpacity,
 } from "react-native";
 import { PageContainer, Title, Text } from "@/components/shared";
 import tinycolor from "tinycolor2";
@@ -41,7 +45,6 @@ export default function TabTwoScreen() {
   const [level, setLevel] = useState(0);
   const [name, setName] = useState("");
 
-  console.log("==> petName:", petName);
   const virtualPetService = new VirtualPetService();
 
   useEffect(() => {
@@ -54,12 +57,12 @@ export default function TabTwoScreen() {
           setUserHasPet(true);
           setId(petData.data.id);
           setHapinessLevel(petData.data.hapinessLevel);
-          
-          const formattedDate = petData.data.lastInteraction 
-            ? new Date(petData.data.lastInteraction).toLocaleDateString('pt-BR')
+
+          const formattedDate = petData.data.lastInteraction
+            ? new Date(petData.data.lastInteraction).toLocaleDateString("pt-BR")
             : null;
           setLastInteraction(formattedDate);
-          
+
           setLevel(petData.data.level);
           setName(petData.data.name);
         }
@@ -72,15 +75,6 @@ export default function TabTwoScreen() {
 
     fetchPetData();
   }, []);
-
-  console.log("==> PET DATAAAAA!!!: ", {
-    userHasPet,
-    id,
-    hapinessLevel,
-    lastInteraction,
-    level,
-    name,
-  });
 
   const handleCreatePet = async () => {
     try {
@@ -117,65 +111,128 @@ export default function TabTwoScreen() {
 
   return (
     <PageContainer customStyle={styles.container}>
-      <Title>Dopamigo</Title>
-      <ImageBackground source={bgImage} style={styles.petContainer}>
-        {!userHasPet && (
-          <View style={{ backgroundColor: "#FFFFFF" }}>
-            <Text>Parece que você ainda não criou seu pet...</Text>
-            <TextInput
-              placeholder="Escolha o nome do seu pet!"
-              value={petName}
-              onChangeText={setPetName}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollViewContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          style={{ flex: 1 }}
+        >
+          <Title>Dopamigo</Title>
+          <ImageBackground 
+            source={bgImage} 
+            style={[
+              styles.petContainer,
+              !userHasPet && { justifyContent: "flex-end" }
+            ]}
+          >
+            {userHasPet && (
+              <View style={styles.petInfoContainer}>
+                <Text style={styles.petInfoText}>{name}</Text>
+                <Text style={styles.petInfoText}>
+                  LV.
+                  <Text style={{ color: "#5B4133", fontSize: 24 }}>
+                    {level}
+                  </Text>
+                </Text>
+              </View>
+            )}
+
+            <Image
+              source={PET_IMAGES[getPetStateIndex()]}
+              style={styles.petImage}
             />
-            <Button title="Confirmar" onPress={handleCreatePet} />
-          </View>
-        )}
+            {userHasPet && (
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 40,
+                }}
+              >
+                <Text style={{ color: "#514B44" }}>
+                  Última interação: {lastInteraction}
+                </Text>
+                <View style={styles.barBackground}>
+                  <View
+                    style={[
+                      styles.barFill,
+                      {
+                        width: `${hapinessLevel}%`,
+                        backgroundColor: getInterpolatedColor(),
+                      },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.barShadow,
+                      {
+                        width: `${hapinessLevel}%`,
+                        backgroundColor: getShadowColor(),
+                      },
+                    ]}
+                  />
+                </View>
+              </View>
+            )}
 
-        {userHasPet && (
-          <View style={{ backgroundColor: "#FFFFFF" }}>
-            <Text>Olá, {name}!</Text>
-            <Text>Felicidade: {hapinessLevel}%</Text>
-            <Text>Nível: {level}</Text>
-            <Text>Última interação: {lastInteraction}</Text>
-          </View>
-        )}
-
-        <Image
-          source={PET_IMAGES[getPetStateIndex()]}
-          style={styles.petImage}
-        />
-        <View style={styles.barBackground}>
-          <View
-            style={[
-              styles.barFill,
-              {
-                width: `${hapinessLevel}%`,
-                backgroundColor: getInterpolatedColor(),
-              },
-            ]}
-          />
-          <View
-            style={[
-              styles.barShadow,
-              {
-                width: `${hapinessLevel}%`,
-                backgroundColor: getShadowColor(),
-              },
-            ]}
-          />
-        </View>
-      </ImageBackground>
+            {!userHasPet && (
+              <View>
+                <View style={styles.createPetContainer}>
+                  <Text>Meu dopamigo se chama...</Text>
+                  <TextInput
+                    placeholder="Escreva um nome..."
+                    value={petName}
+                    onChangeText={setPetName}
+                    style={styles.createPetInput}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={[
+                    styles.createPetButton,
+                    !petName.trim() && styles.createPetButtonDisabled,
+                  ]}
+                  onPress={handleCreatePet}
+                  disabled={!petName.trim()}
+                >
+                  <Text
+                    style={[
+                      styles.createPetButtonText,
+                      !petName.trim() ? styles.createPetButtonTextDisabled : {},
+                    ]}
+                  >
+                    Confirmar
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </ImageBackground>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </PageContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+  },
   petContainer: {
-    height: "100%",
+    flex: 1,
     width: "100%",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    minHeight: 600,
+    paddingVertical: 12,
   },
   petImage: {
     width: 240,
@@ -191,7 +248,7 @@ const styles = StyleSheet.create({
     borderWidth: 9,
     borderColor: "#514B44",
     alignSelf: "center",
-    marginTop: 20,
+    marginTop: 8,
   },
   barFill: {
     height: "100%",
@@ -200,5 +257,58 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     height: "40%",
+  },
+  petInfoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "90%",
+    backgroundColor: "#FFFFFF",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  petInfoText: {
+    fontSize: 24,
+    lineHeight: 24,
+    textAlignVertical: "center",
+    color: "#514B44",
+  },
+  createPetContainer: {
+    backgroundColor: "#FFFFFF",
+    opacity: 0.7,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  createPetInput: {
+    minWidth: 300,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: "#333333",
+    textAlign: "center",
+    fontWeight: "bold",
+    marginTop: 8,
+  },
+  createPetButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 300,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: "#00A954",
+    marginTop: 12,
+  },
+  createPetButtonDisabled: {
+    backgroundColor: "#A8A8A8",
+  },
+  createPetButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  createPetButtonTextDisabled: {
+    color: "#6B6B6B",
   },
 });
