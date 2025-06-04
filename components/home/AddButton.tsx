@@ -35,6 +35,6 @@ const styles = StyleSheet.create({
     plusText: {
         color: "white",
         fontSize: 44,
-        paddingBottom: 80,
+        // paddingBottom: 80, COMENTANDO PQ NO ANDROID DEIXA O BOTAO VERDE VAZIO SEM O "+"
     },
 });
