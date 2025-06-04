@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { Platform } from "react-native";
 import { useFonts } from "expo-font";
 import {
     Stack,
     useRouter,
-    useSegments,
-    SplashScreen as RouterSplashScreen,
 } from "expo-router";
 import {
     DarkTheme,
@@ -83,6 +80,7 @@ export default function RootLayout() {
                         <Stack.Screen name="signUp" />
                         <Stack.Screen name="(tabs)" />
                         <Stack.Screen name="pageNotFound" />
+                        <Stack.Screen name="userPatterns" />
                     </Stack>
                 </ThemeProvider>
             </LoginStateProvider>

@@ -159,6 +159,10 @@ export default function Profile() {
     router.push("../userAchievements");
   };
 
+  const navigateToAiSuggestions = () => {
+    router.push("../userPatterns");
+  };
+
   return (
     <PageContainer
       customStyle={{
@@ -178,6 +182,29 @@ export default function Profile() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          <View>
+            <TouchableOpacity
+              onPress={navigateToAiSuggestions}
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                backgroundColor: Colors.card,
+                padding: 15,
+                borderRadius: 16,
+                marginBottom: 20,
+              }}
+            >
+              <Text>IA: Padrões, sugestões e melhorias</Text>
+              <Ionicons
+                name="chevron-forward-outline"
+                size={20}
+                color={Colors.primary}
+                style={{ marginTop: 5 }}
+              />
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.profileHeaderCard}>
             <Ionicons
               name="person-circle-outline"
