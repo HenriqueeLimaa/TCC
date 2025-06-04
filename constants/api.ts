@@ -22,3 +22,9 @@ export enum VirtualPetRoutes {
     GET = "/pet",
     DELETE = "/pet"
 }
+
+export enum UserPatternsRoutes {
+    GET_PATTERNS = "/user-pattern/me",
+    GET_SUGGESTIONS = "/user-pattern/suggestions",
+    GET_IMPROVEMENTS = "/user-pattern/improvements"
+}
