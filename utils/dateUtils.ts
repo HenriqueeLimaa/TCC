@@ -31,3 +31,20 @@ export const formatIsoDate = (isoDateString: string) => {
     const formattedDay = String(day).padStart(2, "0");
     return `${formattedMonth}/${formattedDay}/${year}`;
 };
+
+export const formatAverageTime = (hours: number): string => {
+    if (!hours || hours <= 0) {
+        return "N/A";
+    }
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+
+    let result = "";
+    if (h > 0) {
+        result += `${h}h `;
+    }
+    if (m > 0) {
+        result += `${m}min`;
+    }
+    return result.trim() || "< 1min";
+};

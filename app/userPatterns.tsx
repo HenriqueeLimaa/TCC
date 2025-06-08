@@ -1,117 +1,185 @@
 import React, { useState, useEffect } from "react";
 import { PageContainer, Title, Text } from "@/components/shared";
-import { UserPatternsService } from "@/api/userPatternsService";
-import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+    UserPatternsDto,
+    UserPatternsService,
+} from "@/api/userPatternsService";
+import {
+    ScrollView,
+    StyleSheet,
+    View,
+    TouchableOpacity,
+    LayoutAnimation,
+    UIManager,
+    Platform,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { SuggestionsView, UserPatternView } from "@/components/pattern";
+import { Colors } from "@/constants/Colors";
+if (
+    Platform.OS === "android" &&
+    UIManager.setLayoutAnimationEnabledExperimental
+) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+interface CollapsibleSectionProps {
+    title: string;
+    children: React.ReactNode;
+}
+
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
+    title,
+    children,
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleOpen = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIsOpen(!isOpen);
+    };
+
+    return (
+        <View style={styles.collapsibleContainer}>
+            <TouchableOpacity onPress={toggleOpen} style={styles.header}>
+                <Title style={styles.headerTitle}>{title}</Title>
+                <Ionicons
+                    name={isOpen ? "chevron-up" : "chevron-down"}
+                    size={24}
+                    color={Colors.primary}
+                />
+            </TouchableOpacity>
+            {isOpen && <View style={styles.content}>{children}</View>}
+        </View>
+    );
+};
 
 export default function UserPatterns() {
-  const router = useRouter();
-  const userPatternsService = new UserPatternsService();
+    const router = useRouter();
+    const userPatternsService = new UserPatternsService();
 
-  const [patterns, setPatterns] = useState<any[]>([]);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [improvements, setImprovements] = useState<any[]>([]);
+    const [patterns, setPatterns] = useState<UserPatternsDto | null>(null);
+    const [suggestions, setSuggestions] = useState<string | null>(null);
+    const [improvements, setImprovements] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchPatterns = async () => {
-      try {
-        const patternsData = await userPatternsService.getPatterns();
-        setPatterns(patternsData.data);
-      } catch (error) {
-        console.error("Error fetching patterns:", error);
-      }
-    };
+    useEffect(() => {
+        const fetchAllData = async () => {
+            try {
+                const [patternsData, suggestionsData, improvementsData] =
+                    await Promise.all([
+                        userPatternsService.getPatterns(),
+                        userPatternsService.getSuggestions(),
+                        userPatternsService.getImprovements(),
+                    ]);
 
-    const fetchSuggestions = async () => {
-      try {
-        const suggestionsData = await userPatternsService.getSuggestions();
-        setSuggestions(suggestionsData.data);
-      } catch (error) {
-        console.error("Error fetching suggestions:", error);
-      }
-    };
+                setPatterns(patternsData.data);
+                setSuggestions(suggestionsData.data);
+                setImprovements(improvementsData.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    const fetchImprovements = async () => {
-      try {
-        const improvementsData = await userPatternsService.getImprovements();
-        setImprovements(improvementsData.data);
-      } catch (error) {
-        console.error("Error fetching improvements:", error);
-      }
-    };
+        fetchAllData();
+    }, []);
 
-    fetchPatterns();
-    fetchSuggestions();
-    fetchImprovements();
-  }, []);
+    return (
+        <PageContainer>
+            <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => router.back()}
+            >
+                <Ionicons name="chevron-back" size={24} color={"black"} />
+            </TouchableOpacity>
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                <Title>IA: Padrões e Sugestões</Title>
+                <Text style={styles.subtitle}>
+                    Descubra os padrões de sua rotina e receba dicas para
+                    melhorar!
+                </Text>
 
-  return (
-    <PageContainer>
-      <TouchableOpacity
-        style={{ marginBottom: 20 }}
-        onPress={() => router.back()}
-      >
-        <Ionicons
-          name="chevron-back"
-          size={20}
-          color={'black'}
-        />
-      </TouchableOpacity>
-      <Title>IA: Padrões, sugestões e melhorias</Title>
-      <Text style={{ marginTop: 0 }}>
-        Receba sugestões e descubra os padrões de sua rotina!
-      </Text>
+                {isLoading ? (
+                    <Text style={styles.loadingText}>
+                        Carregando insights...
+                    </Text>
+                ) : (
+                    <>
+                        <CollapsibleSection title="Seus Padrões">
+                            {patterns ? (
+                                <UserPatternView {...patterns} />
+                            ) : (
+                                <Text>Nenhum padrão encontrado...</Text>
+                            )}
+                        </CollapsibleSection>
 
-      <ScrollView style={{ marginTop: 20 }}>
-        <View style={styles.section}>
-          <Title style={styles.title}>Padrões</Title>
-          {patterns.length > 0 ? (
-            patterns.map((pattern, index) => (
-              <Text key={index} style={{ marginBottom: 10 }}>
-                {pattern.name}
-              </Text>
-            ))
-          ) : (
-            <Text>Nenhum padrão encontrado...</Text>
-          )}
-        </View>
+                        <CollapsibleSection title="Sugestões da IA">
+                            {suggestions ? (
+                                <SuggestionsView suggestionText={suggestions} />
+                            ) : (
+                                <Text>Nenhuma sugestão encontrada...</Text>
+                            )}
+                        </CollapsibleSection>
 
-        <View style={styles.section}>
-          <Title style={styles.title}>Sugestões</Title>
-          {suggestions.length > 0 ? (
-            suggestions.map((suggestion, index) => (
-              <Text key={index} style={{ marginBottom: 10 }}>
-                {suggestion.name}
-              </Text>
-            ))
-          ) : (
-            <Text>Nenhuma sugestão encontrada...</Text>
-          )}
-        </View>
-
-        <View style={styles.section}>
-          <Title style={styles.title}>Progresso</Title>
-          {improvements.length > 0 ? (
-            improvements.map((improvement, index) => (
-              <Text key={index} style={{ marginBottom: 10 }}>
-                {improvement.name}
-              </Text>
-            ))
-          ) : (
-            <Text>Nenhum progresso ainda...</Text>
-          )}
-        </View>
-      </ScrollView>
-    </PageContainer>
-  );
+                        <CollapsibleSection title="Análise de Progresso">
+                            {improvements ? (
+                                <SuggestionsView
+                                    suggestionText={improvements}
+                                />
+                            ) : (
+                                <Text>Nenhum progresso ainda...</Text>
+                            )}
+                        </CollapsibleSection>
+                    </>
+                )}
+            </ScrollView>
+        </PageContainer>
+    );
 }
 
 const styles = StyleSheet.create({
-  section: {
-    marginBottom: 20,
-  },
-  title: {
-    marginBottom: 10,
-  },
+    backButton: {
+        marginBottom: 16,
+    },
+    scrollViewContent: {
+        paddingTop: 16,
+        paddingBottom: 40,
+    },
+    subtitle: {
+        marginBottom: 24,
+        fontSize: 16,
+        color: Colors.secondaryText,
+    },
+    loadingText: {
+        textAlign: "center",
+        marginTop: 40,
+        fontSize: 16,
+        color: Colors.secondaryText,
+    },
+    collapsibleContainer: {
+        backgroundColor: Colors.background,
+        borderRadius: 12,
+        marginBottom: 16,
+        overflow: "hidden",
+        borderWidth: 1,
+        borderColor: Colors.secondaryText,
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 16,
+    },
+    headerTitle: {
+        fontSize: 18,
+        flex: 1,
+        paddingTop: 16,
+    },
+    content: {
+        paddingHorizontal: 16,
+        paddingBottom: 16,
+    },
 });
