@@ -47,6 +47,25 @@ export default function SignUpPage() {
     return `${m}/${d}/${y}`;
   };
 
+  const formatDateInput = (text: string) => {
+    // Remove tudo que não é número
+    const numbersOnly = text.replace(/[^0-9]/g, '');
+    
+    // Aplica a formatação DD/MM/YYYY
+    if (numbersOnly.length <= 2) {
+      return numbersOnly;
+    } else if (numbersOnly.length <= 4) {
+      return `${numbersOnly.slice(0, 2)}/${numbersOnly.slice(2)}`;
+    } else {
+      return `${numbersOnly.slice(0, 2)}/${numbersOnly.slice(2, 4)}/${numbersOnly.slice(4, 8)}`;
+    }
+  };
+
+  const handleBirthDateChange = (text: string) => {
+    const formattedText = formatDateInput(text);
+    setBirthDate(formattedText);
+  };
+
   const checkMissingFields = () => {
     if (!name || !nickname || !email || !password || !birthDate) {
       setNotification({
@@ -137,9 +156,10 @@ export default function SignUpPage() {
           style={styles.input}
           placeholder="01/01/2000"
           placeholderTextColor="#aaa"
-          keyboardType="numeric"
+          keyboardType="default"
           value={birthDate}
-          onChangeText={setBirthDate}
+          onChangeText={handleBirthDateChange}
+          maxLength={10}
         />
 
         <Text style={styles.label}>{t("signUpPage.email", "E-mail")}</Text>

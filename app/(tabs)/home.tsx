@@ -23,7 +23,7 @@ const hasSpecificTime = (dateString: string | undefined): boolean => {
     if (isNaN(dateObj.getTime())) {
       return false;
     }
-    return dateObj.getUTCHours() !== 0 && dateObj.getUTCMinutes() !== 0;
+    return dateObj.getUTCHours() !== 0
   } catch (e) {
     return false;
   }
@@ -86,6 +86,7 @@ export default function HomeScreen() {
       const newTasksWithTime: UserTask[] = [];
       const newTasksAnyTime: UserTask[] = [];
       dailyTasks.forEach((task) => {
+        console.log('==> task date:', task.date);
         if (hasSpecificTime(task.date)) {
           newTasksWithTime.push(task);
         } else {
