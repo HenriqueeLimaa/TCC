@@ -124,19 +124,19 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     card: {
-        backgroundColor: Colors.card,
-        borderRadius: 12,
+        // backgroundColor: Colors.card,
+        // borderRadius: 12,
         padding: 16,
         marginBottom: 20,
         ...Platform.select({
             ios: {
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
+                // shadowColor: "#000",
+                // shadowOffset: { width: 0, height: 2 },
+                // shadowOpacity: 0.1,
+                // shadowRadius: 4,
             },
             android: {
-                elevation: 4,
+                // elevation: 4,
             },
         }),
     },
