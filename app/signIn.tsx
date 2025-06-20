@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Pressable,
+  Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
@@ -69,6 +70,8 @@ export default function SignInPage() {
           onClose={() => setNotification(null)}
         />
       )}
+
+      <Image style={styles.sunflowerIcon} source={require('../assets/images/sunflower.png')} />
 
       <View style={styles.formContainer}>
         <Text style={styles.title}>{t("signInPage.title", "Entrar")}</Text>
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
     backgroundColor: "#fff",
-    marginTop: 100,
+    marginTop: 40,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     padding: 24,
@@ -196,5 +199,10 @@ const styles = StyleSheet.create({
   loginLink: {
     color: Colors.primary,
     fontWeight: "600",
+  },
+  sunflowerIcon: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
   },
 });

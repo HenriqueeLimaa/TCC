@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Pressable,
   ScrollView,
+  Image,
 } from "react-native";
 import { Notification } from "@/components/shared";
 import { NotificationType } from "@/types/notification";
@@ -71,7 +72,8 @@ export default function SignUpPage() {
       });
 
       setNotification({
-        message: "Cadastro realizado com sucesso! \nRedirecionando para a aplicação...",
+        message:
+          "Cadastro realizado com sucesso! \nRedirecionando para a aplicação...",
         type: "success",
       });
 
@@ -101,6 +103,11 @@ export default function SignUpPage() {
           onClose={() => setNotification(null)}
         />
       )}
+
+      <Image
+        style={styles.sunflowerIcon}
+        source={require("../assets/images/sunflower.png")}
+      />
 
       <ScrollView style={styles.formContainer}>
         <Text style={styles.title}>{t("signUpPage.title", "Cadastro")}</Text>
@@ -198,12 +205,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.primary,
-    paddingTop: 24,
+    paddingTop: 60,
   },
   formContainer: {
     flex: 1,
     backgroundColor: "#fff",
-    marginTop: 100,
+    marginTop: 20,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     padding: 24,
@@ -259,5 +266,10 @@ const styles = StyleSheet.create({
   loginLink: {
     color: "#4CAF50",
     fontWeight: "600",
+  },
+  sunflowerIcon: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
   },
 });
