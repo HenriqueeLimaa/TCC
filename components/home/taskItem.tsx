@@ -10,6 +10,7 @@ interface TaskItemProps {
   isLast?: boolean;
   userTask: UserTask;
   formattedDate?: string;
+  showTimeIcon?: boolean;
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({
@@ -17,6 +18,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   isLast = false,
   userTask,
   formattedDate = undefined,
+  showTimeIcon = true,
 }: TaskItemProps) => {
   const userTaskService = new UserTaskService();
   const [isCompleted, setIsCompleted] = useState(userTask.isCompleted);
@@ -42,6 +44,15 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     } else {
       return "night";
     }
+  };
+
+  const adjustTimeForDisplay = (timeString: string) => {
+    if (!timeString || timeString === "00:00") return timeString;
+    
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const adjustedHours = (hours + 3) % 24; // Adiciona 3 horas e garante que não passe de 24
+    
+    return `${adjustedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -72,10 +83,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
           <View style={styles.taskItemRight}>
             <View style={styles.rightControls}>
-              {formattedDate && formattedDate !== "00:00" && (
+              {showTimeIcon && formattedDate && formattedDate !== "00:00" && (
                 <HourIcon
-                  taskHour={formattedDate}
-                  hourType={getHourType(formattedDate)}
+                  taskHour={adjustTimeForDisplay(formattedDate)}
+                  hourType={getHourType(adjustTimeForDisplay(formattedDate))}
                   size={24}
                 />
               )}
@@ -127,7 +138,7 @@ const styles = StyleSheet.create({
   taskItemLeft: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
   },
   taskItemRight: {
     flexDirection: "column",
@@ -171,6 +182,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: "#333333",
     marginLeft: 16,
+    width: '50%',
+    flexWrap: 'wrap',
   },
   taskTime: {
     fontSize: 14,

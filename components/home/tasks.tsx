@@ -8,9 +8,10 @@ import { Ionicons } from "@expo/vector-icons";
 interface TasksProps {
     title: string;
     tasks: UserTask[];
+    showTimeIcon?: boolean;
 }
 
-export const Tasks: React.FC<TasksProps> = ({ title, tasks }) => {
+export const Tasks: React.FC<TasksProps> = ({ title, tasks, showTimeIcon }) => {
     const [showTasks, setShowTasks] = useState(true);
     const spinValue = useRef(new Animated.Value(showTasks ? 1 : 0)).current;
 
@@ -113,6 +114,7 @@ export const Tasks: React.FC<TasksProps> = ({ title, tasks }) => {
                             formattedDate={
                                 task.date ? formatTime(task.date) : ""
                             }
+                            showTimeIcon={showTimeIcon}
                         />
                     ))}
                 </View>

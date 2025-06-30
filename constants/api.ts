@@ -1,5 +1,4 @@
-export const API_URL = "http://192.168.0.223:3000";
-// export const API_URL = "http://167.234.239.154:3000";
+export const API_URL = "http://167.234.239.154:3000";
 
 export enum UserRoutes {
     REGISTER = "/users",

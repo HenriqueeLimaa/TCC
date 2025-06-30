@@ -163,13 +163,12 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             return;
         }
 
-        const combinedDateTime = new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate(),
-            hasSetTime ? time.getHours() : 0,
-            hasSetTime ? time.getMinutes() : 0
-        );
+        const combinedDateTime = new Date(date);
+        if (hasSetTime) {
+            combinedDateTime.setHours(time.getHours(), time.getMinutes(), 0, 0);
+        } else {
+            combinedDateTime.setHours(0, 0, 0, 0);
+        }
 
         const pad = (num: number) => num.toString().padStart(2, "0");
         const formattedDateTimeString = `${pad(

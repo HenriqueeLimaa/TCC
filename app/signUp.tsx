@@ -48,10 +48,8 @@ export default function SignUpPage() {
   };
 
   const formatDateInput = (text: string) => {
-    // Remove tudo que não é número
     const numbersOnly = text.replace(/[^0-9]/g, '');
     
-    // Aplica a formatação DD/MM/YYYY
     if (numbersOnly.length <= 2) {
       return numbersOnly;
     } else if (numbersOnly.length <= 4) {

@@ -307,11 +307,11 @@ export default function Profile() {
               <Text style={styles.actionButtonText}>Editar Perfil</Text>
             </TouchableOpacity>
           )}
-        </ScrollView>
 
-        <TouchableOpacity style={styles.signOutButton} onPress={handleLogout}>
-          <Text style={styles.signOutButtonText}>Sair</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.signOutButton} onPress={handleLogout}>
+            <Text style={styles.signOutButtonText}>Sair</Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
     </PageContainer>
   );
@@ -407,6 +407,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 15,
     borderRadius: 16,
+    top: 20,
   },
   signOutButtonText: {
     fontSize: 14,

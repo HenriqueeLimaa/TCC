@@ -259,7 +259,7 @@ export default function HomeScreen() {
               </Text>
             ) : (
               <>
-                <Tasks title="Com horário" tasks={tasksWithTime} />
+                <Tasks title="Com horário" tasks={tasksWithTime} showTimeIcon={true} />
                 {tasksWithTime.length === 0 &&
                   (tasksAnyTime.length > 0 ||
                     (tasksAnyTime.length === 0 && !isLoading)) && (
@@ -272,7 +272,7 @@ export default function HomeScreen() {
                   <View style={styles.listSeparator} />
                 )}
 
-                <Tasks title="A qualquer momento do dia" tasks={tasksAnyTime} />
+                <Tasks title="A qualquer momento do dia" tasks={tasksAnyTime} showTimeIcon={false} />
                 {tasksAnyTime.length === 0 &&
                   (tasksWithTime.length > 0 ||
                     (tasksWithTime.length === 0 && !isLoading)) && (
